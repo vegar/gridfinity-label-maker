@@ -16,10 +16,12 @@ interface Built {
 }
 
 /** Everything that changes a label's geometry. Colours and the id don't. */
-function geometryKey(state: LabelState): string {
-  const { base, units, ribs, align, gap, margin, style, textDepth } = state;
+function geometryKey(state: LabelState, models: string): string {
+  const { base, units, ribs, align, gap, margin, style, textDepth, model } = state;
   const segments = state.segments.map(({ color, ...rest }) => rest);
-  return JSON.stringify([base, units, ribs, segments, align, gap, margin, style, textDepth]);
+  // An uploaded model can arrive, go or be turned over after the label was built.
+  const loaded = base === "custom" ? models : "";
+  return JSON.stringify([base, units, ribs, segments, align, gap, margin, style, textDepth, model, loaded]);
 }
 
 function build(engine: Engine, state: LabelState): BuildResult {
@@ -40,8 +42,9 @@ function free(parts: LabelParts | undefined) {
 /**
  * Build the geometry of every label, keyed by label id. Only labels whose
  * geometry inputs changed are rebuilt, so editing one label stays fast.
+ * `models` names the uploaded models that are loaded, and how they're turned.
  */
-export function useLabels(engine: Engine | undefined, labels: LabelState[]): Map<string, BuildResult> {
+export function useLabels(engine: Engine | undefined, labels: LabelState[], models = ""): Map<string, BuildResult> {
   // The latest builds, reused across renders (and across StrictMode's double
   // render, so that doesn't build twice).
   const cache = useRef(new Map<string, Built>());
@@ -50,14 +53,14 @@ export function useLabels(engine: Engine | undefined, labels: LabelState[]): Map
     const next = new Map<string, Built>();
     if (engine) {
       for (const label of labels) {
-        const key = geometryKey(label);
+        const key = geometryKey(label, models);
         const cached = cache.current.get(label.id);
         next.set(label.id, cached?.key === key ? cached : { key, result: build(engine, label) });
       }
     }
     cache.current = next;
     return new Map([...next].map(([id, built]) => [id, built.result]));
-  }, [engine, labels]);
+  }, [engine, labels, models]);
 
   // Manifolds live in WASM memory and must be freed by hand. Free builds that
   // were replaced once the new ones are committed, so nothing still renders them.

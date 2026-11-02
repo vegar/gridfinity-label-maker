@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ManifoldToplevel } from "manifold-3d";
 import { BASE_KINDS, baseInfo, type BaseKind } from "../bases";
+import { KNOWN_SYSTEMS } from "../knownModels";
 import { CloneDialog } from "../components/CloneDialog";
 import { holderPatch, MIN_LEGIBLE_CAP_HEIGHT } from "../components/labelOps";
 import { SymbolIcon, TextIcon } from "../components/Icons";
@@ -83,7 +84,7 @@ export function Sidebar(props: SidebarProps) {
                 <div className="outline-row" aria-selected={current && segment === undefined}>
                   <button type="button" className="outline-pick" onClick={() => selectLabel(label.id)}>
                     <span className="swatch" style={{ background: label.baseColor, color: label.textColor }}>
-                      {label.units}U
+                      {label.base === "custom" ? "File" : `${label.units}U`}
                     </span>
                     <span className="label-title">{labelTitle(label)}</span>
                   </button>
@@ -186,9 +187,9 @@ export function Sidebar(props: SidebarProps) {
   );
 }
 
-function LabelGrid({ state, update, textDepth, maxDepth, shrunk }: SidebarProps) {
+function LabelGrid({ state, update, models, textDepth, maxDepth, shrunk }: SidebarProps) {
   const base = baseInfo(state.base);
-  const size = base.size(state.units);
+  const size = base.size(state);
   const growing = state.segments.some((s) => s.grow);
   return (
     <PropertyGrid>
@@ -200,17 +201,21 @@ function LabelGrid({ state, update, textDepth, maxDepth, shrunk }: SidebarProps)
             onChange={(kind) => update(holderPatch(kind))}
           />
         </Prop>
-        <Prop name="Bin width">
-          <Select
-            value={state.units}
-            disabled={base.oneSize}
-            options={[1, 2, 3].map((u) => ({ value: u, label: `${u}U` }))}
-            onChange={(units) => update({ units })}
-          />
-        </Prop>
+        {state.base === "custom" ? (
+          <ModelProps state={state} update={update} models={models} />
+        ) : (
+          <Prop name="Bin width">
+            <Select
+              value={state.units}
+              disabled={base.oneSize}
+              options={[1, 2, 3].map((u) => ({ value: u, label: `${u}U` }))}
+              onChange={(units) => update({ units })}
+            />
+          </Prop>
+        )}
         <Prop name="Size">
           <span className="readonly">
-            {+size.width.toFixed(1)} × {size.height} mm
+            {+size.width.toFixed(1)} × {+size.height.toFixed(1)} mm
           </span>
         </Prop>
         {state.base === "cullenect" && (
@@ -263,6 +268,81 @@ function LabelGrid({ state, update, textDepth, maxDepth, shrunk }: SidebarProps)
         </Prop>
       </Category>
     </PropertyGrid>
+  );
+}
+
+/**
+ * Pick, upload or turn over the label model for an uploaded-model holder.
+ * Only known label files are accepted, and they stay in this browser.
+ */
+function ModelProps({ state, update, models }: Pick<SidebarProps, "state" | "update" | "models">) {
+  const [error, setError] = useState<string>();
+  const current = models.list.find((m) => m.hash === state.model);
+  const upload = async (file: File | undefined) => {
+    if (!file) return;
+    setError(undefined);
+    try {
+      update({ model: await models.add(file) });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    }
+  };
+  return (
+    <>
+      {models.list.length > 0 && (
+        <Prop name="Model">
+          <Select
+            value={current?.hash ?? ""}
+            options={[
+              ...(current ? [] : [{ value: "", label: "Choose…" }]),
+              ...models.list.map((m) => ({ value: m.hash, label: m.name })),
+            ]}
+            onChange={(model) => model && update({ model })}
+          />
+        </Prop>
+      )}
+      <Prop name={models.list.length ? "Add model" : "Model"} title={`The original STL or 3MF, as it came from the designer. Supported: ${KNOWN_SYSTEMS.join(", ")}`}>
+        <label className="file-button">
+          Upload STL / 3MF…
+          <input
+            type="file"
+            accept=".stl,.3mf"
+            hidden
+            onChange={(e) => {
+              upload(e.target.files?.[0]);
+              e.target.value = "";
+            }}
+          />
+        </label>
+      </Prop>
+      {current && (
+        <Prop name="Text side" title="Turn the label over if the text ends up on the back">
+          <Select
+            value={current.turned ? "back" : "front"}
+            options={[
+              { value: "front", label: "Front" },
+              { value: "back", label: "Back (turned over)" },
+            ]}
+            onChange={(side) => models.setTurned(current.hash, side === "back")}
+          />
+        </Prop>
+      )}
+      {current && (
+        <Prop name="Text area" title="The flat part of the face the text is fitted to">
+          <span className="readonly">
+            {+current.face.width.toFixed(1)} × {+current.face.height.toFixed(1)} mm
+          </span>
+        </Prop>
+      )}
+      {error && <Note warn>{error}</Note>}
+      {!current && !error && (
+        <Note>
+          {state.model
+            ? "This browser doesn't have the model this label was made with. Upload it again."
+            : `Upload the original label file for your holder (supported: ${KNOWN_SYSTEMS.join(", ")}). It stays in your browser and is never sent anywhere.`}
+        </Note>
+      )}
+    </>
   );
 }
 

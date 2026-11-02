@@ -164,13 +164,13 @@ export function saveSession(session: Session) {
  * so a batch of labels comes out consistent.
  */
 export function blankLabel(template: LabelState): LabelState {
-  const { base, units, ribs, align, gap, margin, style, textDepth } = template;
+  const { base, units, ribs, model, align, gap, margin, style, textDepth } = template;
   const { baseColor, textColor, symbolColor } = template;
   return {
     ...DEFAULT_STATE,
     id: newId(),
     segments: [textSegment("", template.segments.find(isText))],
-    ...{ base, units, ribs, align, gap, margin, style, textDepth },
+    ...{ base, units, ribs, model, align, gap, margin, style, textDepth },
     ...{ baseColor, textColor, symbolColor },
   };
 }
