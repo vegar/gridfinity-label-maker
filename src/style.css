@@ -1245,3 +1245,40 @@ h2 small {
 .file-button:focus-within {
   outline: 2px solid var(--accent);
 }
+
+/* What's new: one dated line per feature. */
+.whats-new {
+  width: min(520px, calc(100vw - 32px));
+}
+
+.whats-new ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: min(60vh, 480px);
+  overflow-y: auto;
+  line-height: 1.45;
+}
+
+.whats-new li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.whats-new time {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.whats-new a {
+  color: var(--accent);
+}
+
+.whats-new p {
+  margin: 0;
+  line-height: 1.5;
+}
