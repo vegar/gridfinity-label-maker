@@ -37,6 +37,11 @@ const HOLDERS: Resource[] = [
     note: "Parametric bins with printable labels held by a tab and hole at each end.",
   },
   {
+    name: "USSA Vault",
+    url: "https://www.ussadesign.com/pages/vault",
+    note: "USSA's commercial modular storage system. Its drawer labels work with the label file you bought; Vault is USSA's, and this site isn't affiliated with them.",
+  },
+  {
     name: "Gridfinity Extended",
     url: "https://github.com/ostat/gridfinity_extended_openscad",
     note: "ostat's OpenSCAD bins. Label sizes are checked against its label pockets.",
@@ -82,6 +87,10 @@ const CHOICES: { title: string; text: ReactNode }[] = [
   {
     title: "Cullenect channels on 1U only",
     text: "As in gflabel, the snap-fit channels on the back are offered only on 1U Cullenect v2 labels. The legacy v1.1 label comes in one size, for 1U bins.",
+  },
+  {
+    title: "Bring your own label file",
+    text: "Some holders, such as USSA's Vault, are commercial models we can't share or copy. For those you upload the label file you bought, and the text is put on its face in your browser. The file is never sent anywhere or shipped with this site. Only files we know (by their SHA-256 fingerprint) are accepted, so we can place the text right and the feature can't be used to share models.",
   },
   {
     title: "Screw drawn as two views",

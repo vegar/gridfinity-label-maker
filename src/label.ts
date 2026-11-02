@@ -56,6 +56,8 @@ export function isText(segment: Segment): segment is TextSegment {
 export interface LabelOptions {
   base: BaseKind;
   units: number;
+  /** For an uploaded holder model: the SHA-256 of its file. */
+  model?: string;
   ribs: boolean;
   segments: Segment[];
   /** Where the row sits on the label when nothing grows. */
@@ -81,7 +83,7 @@ export const DEFAULT_OPTIONS: LabelOptions = {
 };
 
 /** Deepest flush text that still leaves material over the snap-fit channels or below the face. */
-export function maxEmbeddedDepth(opts: Pick<LabelOptions, "base" | "units" | "ribs">): number {
+export function maxEmbeddedDepth(opts: Pick<LabelOptions, "base" | "units" | "ribs" | "model">): number {
   return baseInfo(opts.base).maxEmbeddedDepth({ ...opts, raised: false });
 }
 
@@ -126,7 +128,7 @@ type Item = { grow: boolean; index: number } & (
  * growing segments, or left around the row.
  */
 function layoutFace(wasm: ManifoldToplevel, fonts: Fonts, opts: LabelOptions) {
-  const area = baseInfo(opts.base).area(opts.units);
+  const area = baseInfo(opts.base).area(opts);
   const areaWidth = area.width - 2 * opts.margin;
   const areaHeight = area.height - 2 * opts.margin;
 

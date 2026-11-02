@@ -7,6 +7,7 @@ import type { Engine } from "./useEngine";
 import { fileName, loadSession, segmentColor, saveSession, updateLabel, type LabelState, type Session } from "./state";
 import { useEngine } from "./useEngine";
 import { useLabels } from "./useLabels";
+import { useModels } from "./useModels";
 import { MIN_LEGIBLE_CAP_HEIGHT } from "./components/labelOps";
 import { PreviewCanvas } from "./components/PreviewCanvas";
 import type { PreviewLabel, RowLayout } from "./preview";
@@ -83,7 +84,9 @@ export function App() {
   const showFeatures = hash === "#features";
 
   const { engine, error: engineError } = useEngine();
-  const builds = useLabels(engine, session.labels);
+  const models = useModels();
+  const modelsKey = models.list.map((m) => `${m.hash}:${m.turned}`).join(",");
+  const builds = useLabels(engine, session.labels, modelsKey);
   const { parts, error: buildError, ms } = builds.get(state.id) ?? {};
 
   // Prototype: how far the selected label stands out from the others in the preview.
@@ -94,7 +97,7 @@ export function App() {
         const built = builds.get(label.id)?.parts;
         return {
           id: label.id,
-          ...baseInfo(label.base).size(label.units),
+          ...baseInfo(label.base).size(label),
           parts: built
             ? [
                 { manifold: built.base, color: label.baseColor },
@@ -230,6 +233,7 @@ export function App() {
           update={update}
           engine={engine}
           builds={builds}
+          models={models}
           textDepth={textDepth}
           maxDepth={maxDepth}
           shrunk={shrunk}
