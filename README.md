@@ -22,7 +22,7 @@ Inspired by [label.alch.shop](https://label.alch.shop), with label geometry from
     37.8, 79.8 or 121.8 × 11 × 0.8 mm with a tab and hole at each end. 11 mm tall rather than
     gflabel's 11.5, to fit Gridfinity Extended's 11.35 mm pocket. With raised text, the face sits
     0.4 mm below a rim, as in gflabel.
-- One or more lines of text, auto-shrunk to fit, left/center/right aligned, Open Sans regular or bold.
+- One or more lines of text, auto-shrunk to fit, left/center/right aligned, Open Sans, Barlow Semi Condensed, Roboto Condensed or Atkinson Hyperlegible, regular or bold (a default font per label, overridable per text).
 - **Flush** (text inlaid level with the surface, for multi-colour printing) or **raised** text.
 - **Screw symbol** in the style of label.alch.shop: the drive seen from above (hex, Phillips,
   Pozidriv, Torx, slot, square, cross, triangle, security pin, or a hex bolt head) next to a
@@ -87,5 +87,5 @@ ignored), and **Enforce HTTPS** ticked once GitHub has issued the certificate.
 ## Licence
 
 MIT, see [`LICENSE`](LICENSE). The label geometry and symbols ported from gflabel are BSD-3-Clause,
-and Open Sans is under the SIL Open Font License; see
+and the label fonts are under the SIL Open Font License; see
 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).

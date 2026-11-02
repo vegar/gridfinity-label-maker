@@ -12,6 +12,7 @@ import {
   type TextSegment,
   type Weight,
 } from "./label";
+import { DEFAULT_FONT, isFontFamily } from "./fonts";
 import { migrateSymbol, symbolInfo, type LabelSymbol } from "./symbols";
 import type { Align } from "./text";
 
@@ -85,9 +86,10 @@ function legacySegments({ text, symbols, symbolPosition }: LegacyFields): Partia
  */
 function restoreSegment(seg: Partial<Segment>, label: LegacyFields & { align?: Align }): Segment {
   if (seg.kind === "text") {
-    const text = seg as Partial<TextSegment>;
+    const { font, ...text } = seg as Partial<TextSegment>;
     return {
       ...text,
+      ...(isFontFamily(font) ? { font } : {}),
       kind: "text",
       text: text.text ?? "",
       align: text.align ?? label.align ?? TEXT_DEFAULTS.align,
@@ -110,6 +112,8 @@ function restoreLabel(saved: Partial<LabelState> & LegacyFields): LabelState {
   const state: LabelState = { ...DEFAULT_STATE, id: newId(), ...rest };
   // Labels from before there was a choice are Cullenect ones.
   if (!isBaseKind(state.base)) state.base = DEFAULT_STATE.base;
+  // Labels from before there was a font choice keep Open Sans.
+  if (!isFontFamily(state.font)) state.font = DEFAULT_FONT;
   const segments: Partial<Segment>[] = Array.isArray(saved.segments)
     ? saved.segments
     : legacySegments({ text, symbols, symbolPosition });
@@ -174,13 +178,13 @@ export function saveSession(session: Session) {
  */
 export function blankLabel(template: LabelState): LabelState {
   const { base, units, ribs, model, align, gap, margin, style, textDepth } = template;
-  const { baseColor, textColor, symbolColor } = template;
+  const { baseColor, textColor, symbolColor, font } = template;
   return {
     ...DEFAULT_STATE,
     id: newId(),
     segments: [textSegment("", template.segments.find(isText))],
     ...{ base, units, ribs, model, align, gap, margin, style, textDepth },
-    ...{ baseColor, textColor, symbolColor },
+    ...{ baseColor, textColor, symbolColor, font },
   };
 }
 

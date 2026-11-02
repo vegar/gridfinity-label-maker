@@ -14,7 +14,7 @@ import { buildByKind } from "./parts";
 let wasm: ManifoldToplevel;
 const fontData = readFileSync(new URL("../public/fonts/OpenSans-Regular.ttf", import.meta.url));
 const font = opentype.parse(fontData.buffer.slice(fontData.byteOffset, fontData.byteOffset + fontData.byteLength));
-const fonts = { regular: font, bold: font };
+const fonts = () => font;
 
 beforeAll(async () => {
   wasm = await loadManifold();

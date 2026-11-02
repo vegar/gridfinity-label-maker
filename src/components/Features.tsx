@@ -119,6 +119,10 @@ const GROUPS: Group[] = [
         text: "Each text has its own alignment (left, centre, right), weight (regular or bold) and maximum letter height. Press Enter for a second line. Text that doesn't fit is shrunk, and the app warns if letters get too small to print cleanly.",
       },
       {
+        title: "Fonts",
+        text: "Pick a default font for the label under Print: Open Sans, Barlow Semi Condensed, Roboto Condensed or Atkinson Hyperlegible. A text can use its own font instead, like it can have its own colour. The condensed fonts fit longer text taller on a short label, and Atkinson Hyperlegible keeps I, l and 1 apart.",
+      },
+      {
         title: "Symbol height",
         text: "Each symbol has its own height, from 3 to 9.4 mm.",
       },

@@ -98,7 +98,7 @@ export function App() {
     setDialog(null);
   };
 
-  const { engine, error: engineError } = useEngine();
+  const { engine, error: engineError } = useEngine(session.labels);
   const models = useModels();
   const modelsKey = models.list.map((m) => `${m.hash}:${m.turned}`).join(",");
   const builds = useLabels(engine, session.labels, modelsKey);

@@ -199,3 +199,21 @@ describe("segment colours", () => {
     expect(restored.segments.map((s) => s.color)).toEqual(["#ff0000", "#0000ff", undefined]);
   });
 });
+
+describe("fonts", () => {
+  it("gives labels saved before the font choice Open Sans", () => {
+    const saved = JSON.stringify({ labels: [{ id: "a" }, { id: "b", font: "barlow-semi-condensed" }, { id: "c", font: "comic" }] });
+    expect(parseSession(saved, null).labels.map((l) => l.font)).toEqual(["open-sans", "barlow-semi-condensed", "open-sans"]);
+  });
+
+  it("keeps a text segment's own font, and drops unknown ones", () => {
+    const s = JSON.parse(JSON.stringify(session("a"))) as Session;
+    s.labels[0].segments = [{ ...text("M3"), font: "roboto-condensed" }, { ...text("12"), font: "comic" as never }, text("x")];
+    const restored = parseSession(JSON.stringify(s), null).labels[0];
+    expect(restored.segments.map((seg) => (seg.kind === "text" ? seg.font : "-"))).toEqual(["roboto-condensed", undefined, undefined]);
+  });
+
+  it("keeps the default font for a blank label", () => {
+    expect(blankLabel(label("a", { font: "atkinson-hyperlegible" })).font).toBe("atkinson-hyperlegible");
+  });
+});
