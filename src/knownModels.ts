@@ -16,21 +16,25 @@ export interface KnownModel {
   name: string;
   /** The face is the smaller of the two big flat sides. */
   flip?: boolean;
-  /** Where text fits, when the face isn't a plain rectangle. */
+  /** Swap the ends: the label lies the other way round on its face. */
+  turnAround?: boolean;
+  /** Where text fits, when the face isn't a plain rectangle, after any turning. */
   area?: TextArea;
 }
 
 export const KNOWN_MODELS: Record<string, KnownModel> = {
   // USSA Vault drawer label, "Label.stl": 47.9 × 20.6 × 2 mm, with a round
-  // left end (r 9.6 mm), a bead along both long edges at the back to slide
-  // into the drawer's rail, and a ramp at the right end. The face is the
-  // narrower flat side; the text area keeps 16 mm of height clear of the
-  // round end.
+  // end (r 9.6 mm), a bead along both long edges at the back to slide into
+  // the drawer front, and a ramp at the square end. The face is the narrower
+  // flat side. On the drawer the square end is at the left and the round
+  // end sticks out to the right, so the file is turned around. The text
+  // area keeps 16 mm of height clear of the round end.
   "33113aa7b3be2b55f5b94b3416208f1f019ad11bb70a416814a94afb20b01cf2": {
     system: "USSA Vault",
     name: "Vault label",
     flip: true,
-    area: { width: 40, height: 16, x: 2.2 },
+    turnAround: true,
+    area: { width: 40, height: 16, x: -2.2 },
   },
 };
 
