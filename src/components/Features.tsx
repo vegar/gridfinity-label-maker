@@ -76,6 +76,11 @@ const GROUPS: Group[] = [
           "Four segments: a screw, bold “M5”, smaller two-line text set to Grow and aligned left, and a washer pushed to the end.",
       },
       {
+        src: "stacked.webp",
+        alt: "Three 2U labels with a big first line over a smaller second line: NUTS over WASHERS, a hex nut beside M4 over BOLTS, and M5–M6 over BOLTS + PINS",
+        caption: "Stacked segments: each small line is ticked Below previous, so it sits under the big one in the same column.",
+      },
+      {
         src: "segments-outline.webp",
         alt: "The outline listing the label's four segments",
         caption: "The same label in the outline, one line per segment.",
