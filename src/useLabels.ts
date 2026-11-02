@@ -17,11 +17,11 @@ interface Built {
 
 /** Everything that changes a label's geometry. Colours and the id don't. */
 function geometryKey(state: LabelState, models: string): string {
-  const { base, units, ribs, align, gap, margin, style, textDepth, model } = state;
+  const { base, units, ribs, font, align, gap, margin, style, textDepth, model } = state;
   const segments = state.segments.map(({ color, ...rest }) => rest);
   // An uploaded model can arrive, go or be turned over after the label was built.
   const loaded = base === "custom" ? models : "";
-  return JSON.stringify([base, units, ribs, segments, align, gap, margin, style, textDepth, model, loaded]);
+  return JSON.stringify([base, units, ribs, font, segments, align, gap, margin, style, textDepth, model, loaded]);
 }
 
 function build(engine: Engine, state: LabelState): BuildResult {
@@ -53,6 +53,13 @@ export function useLabels(engine: Engine | undefined, labels: LabelState[], mode
     const next = new Map<string, Built>();
     if (engine) {
       for (const label of labels) {
+        // Fonts load on first use; build the label once its fonts are in.
+        if (!engine.hasFonts(label)) {
+          // Keep showing the last build meanwhile; an empty key rebuilds it next time.
+          const cached = cache.current.get(label.id);
+          next.set(label.id, { key: "", result: cached?.result ?? {} });
+          continue;
+        }
         const key = geometryKey(label, models);
         const cached = cache.current.get(label.id);
         next.set(label.id, cached?.key === key ? cached : { key, result: build(engine, label) });

@@ -59,7 +59,22 @@ const LIBRARIES: Resource[] = [
   { name: "three.js", url: "https://threejs.org", note: "The 3D preview." },
   { name: "fflate", url: "https://github.com/101arrowz/fflate", note: "Zips the 3MF and STL files." },
   { name: "React", url: "https://react.dev", note: "The user interface." },
-  { name: "Open Sans", url: "https://fonts.google.com/specimen/Open+Sans", note: "The label font (SIL Open Font License)." },
+  { name: "Open Sans", url: "https://fonts.google.com/specimen/Open+Sans", note: "The default label font (SIL Open Font License)." },
+  {
+    name: "Barlow Semi Condensed",
+    url: "https://fonts.google.com/specimen/Barlow+Semi+Condensed",
+    note: "A narrow DIN-style label font (SIL Open Font License).",
+  },
+  {
+    name: "Roboto Condensed",
+    url: "https://fonts.google.com/specimen/Roboto+Condensed",
+    note: "A narrow label font (SIL Open Font License).",
+  },
+  {
+    name: "Atkinson Hyperlegible",
+    url: "https://fonts.google.com/specimen/Atkinson+Hyperlegible",
+    note: "A label font that keeps I, l and 1 apart (SIL Open Font License).",
+  },
 ];
 
 const CHOICES: { title: string; text: ReactNode }[] = [
@@ -104,6 +119,10 @@ const CHOICES: { title: string; text: ReactNode }[] = [
   {
     title: "A label is a row of segments",
     text: "Text and symbols can come in any order. Segments marked Grow share the spare width; without any, the row is packed together with a fixed gap (1 mm by default). Each text has its own alignment, weight and letter height, and each symbol its own height, so small bold text can sit next to tall regular text. Two sizes on two lines, a big line over a smaller one, are two text segments stacked into a column rather than one text with sizes per line: each line then has every text setting, and symbols can stack the same way.",
+  },
+  {
+    title: "Open Sans by default",
+    text: "Open Sans is gflabel's font and was the only one at first, so labels saved before the font choice look the same. Condensed fonts in bold are often a better fit for printing: long text on a short label comes out taller, with strokes wider than a 0.4 mm nozzle line. Fonts other than Open Sans are only downloaded once a label uses them.",
   },
   {
     title: "Flush text for multi-colour",

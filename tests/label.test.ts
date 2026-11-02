@@ -14,7 +14,7 @@ const BED = { width: 256, depth: 256 };
 let wasm: ManifoldToplevel;
 const fontData = readFileSync(new URL("../public/fonts/OpenSans-Regular.ttf", import.meta.url));
 const font = opentype.parse(fontData.buffer.slice(fontData.byteOffset, fontData.byteOffset + fontData.byteLength));
-const fonts = { regular: font, bold: font };
+const fonts = () => font;
 
 beforeAll(async () => {
   wasm = await loadManifold();
@@ -97,6 +97,17 @@ describe("buildLabel", () => {
     expect(text!.boundingBox().min[2]).toBeCloseTo(-0.3, 3);
     const noRibs = buildByKind(wasm, fonts, { ...DEFAULT_OPTIONS, ribs: false, textDepth: 0.6 });
     expect(noRibs.text!.boundingBox().min[2]).toBeCloseTo(-0.6, 3);
+  });
+
+  it("uses the label's font, unless a text segment sets its own", () => {
+    const calls: string[] = [];
+    const tracking = (family: string, weight: string) => {
+      calls.push(`${family} ${weight}`);
+      return font;
+    };
+    const own = { ...textSegment("B"), font: "atkinson-hyperlegible" as const };
+    buildLabel(wasm, tracking, { ...DEFAULT_OPTIONS, font: "barlow-semi-condensed", segments: [textSegment("A"), own] });
+    expect(calls).toEqual(["barlow-semi-condensed bold", "atkinson-hyperlegible bold"]);
   });
 
   it("raises text above the face", () => {

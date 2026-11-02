@@ -18,6 +18,7 @@ import {
   segmentSummary,
 } from "../components/segmentOps";
 import { isText, type Segment, type Weight } from "../label";
+import { FONT_FAMILIES, FONTS, type FontFamily } from "../fonts";
 import {
   addLabel,
   blankLabel,
@@ -263,6 +264,13 @@ function LabelGrid({ state, update, models, textDepth, maxDepth, shrunk }: Sideb
         <Prop name="Default text colour" title="For text segments without their own colour">
           <input type="color" value={state.textColor} onChange={(e) => update({ textColor: e.target.value })} />
         </Prop>
+        <Prop name="Default font" title="For text segments without their own font">
+          <Select<FontFamily>
+            value={state.font}
+            options={FONT_FAMILIES.map((f) => ({ value: f, label: FONTS[f].name }))}
+            onChange={(font) => update({ font })}
+          />
+        </Prop>
         <Prop name="Default symbol colour" title="For symbol segments without their own colour">
           <input type="color" value={state.symbolColor} onChange={(e) => update({ symbolColor: e.target.value })} />
         </Prop>
@@ -415,6 +423,19 @@ function SegmentGrid({ state, update, engine, index }: SidebarProps & { index: n
           <>
             <Prop name="Align" title="How the lines line up, and where the text sits when it grows">
               <Select value={seg.align} options={ALIGN_OPTIONS} onChange={(align) => replace({ ...seg, align })} />
+            </Prop>
+            <Prop name="Font" title="Label default uses the font set under Print">
+              <Select<FontFamily | "">
+                value={seg.font ?? ""}
+                options={[
+                  { value: "", label: `Label default (${FONTS[state.font].name})` },
+                  ...FONT_FAMILIES.map((f) => ({ value: f, label: FONTS[f].name })),
+                ]}
+                onChange={(font) => {
+                  const { font: _, ...rest } = seg;
+                  replace(font ? { ...rest, font } : rest);
+                }}
+              />
             </Prop>
             <Prop name="Weight">
               <Select<Weight>

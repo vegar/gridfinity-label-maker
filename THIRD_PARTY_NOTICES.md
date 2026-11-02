@@ -33,6 +33,12 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ```
 
-## Open Sans
+## Label fonts
 
-`public/fonts/OpenSans-*.ttf` are licensed under the SIL Open Font License 1.1, see `public/fonts/LICENSE-OpenSans.txt`.
+The label fonts in `public/fonts` are licensed under the SIL Open Font License 1.1:
+
+- Open Sans, `OpenSans-*.ttf`, see `public/fonts/LICENSE-OpenSans.txt`.
+- Barlow Semi Condensed, `BarlowSemiCondensed-*.ttf`, see `public/fonts/LICENSE-Barlow.txt`.
+- Atkinson Hyperlegible, `AtkinsonHyperlegible-*.ttf`, see `public/fonts/LICENSE-AtkinsonHyperlegible.txt`.
+- Roboto Condensed, `RobotoCondensed-*.ttf`, see `public/fonts/LICENSE-RobotoCondensed.txt`, as distributed by Google Fonts.
+  The font files' own metadata still names the Apache License 2.0, under which Roboto was first released.

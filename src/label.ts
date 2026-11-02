@@ -3,10 +3,12 @@ import type { CrossSection, Manifold, ManifoldToplevel } from "manifold-3d";
 import { baseInfo, type BaseKind } from "./bases";
 import { isVariableWidth, renderSymbol, type LabelSymbol } from "./symbols";
 import { textBlock, type Align } from "./text";
+import { DEFAULT_FONT, type FontFamily } from "./fonts";
 
 export type LabelStyle = "embedded" | "raised";
 export type Weight = "regular" | "bold";
-export type Fonts = Record<Weight, Font>;
+/** Looks up a loaded font by family and weight. */
+export type Fonts = (family: FontFamily, weight: Weight) => Font;
 
 interface SegmentOptions {
   /** CSS hex colour for this segment. Unset uses the label's default text or symbol colour. */
@@ -24,6 +26,8 @@ export interface TextSegment extends SegmentOptions {
   kind: "text";
   text: string;
   weight: Weight;
+  /** Font for this text. Unset uses the label's default font. */
+  font?: FontFamily;
   /** Largest capital-letter height, in mm. Text shrinks below this to fit. */
   maxCapHeight: number;
 }
@@ -48,7 +52,12 @@ export function symbolSegment(symbol: LabelSymbol, like?: SymbolSegment): Symbol
 /** A text segment, styled like `like` if given. */
 export function textSegment(text: string, like?: TextSegment): TextSegment {
   const { align, weight, maxCapHeight } = like ?? TEXT_DEFAULTS;
-  return { kind: "text", text, align, weight, maxCapHeight };
+  return { kind: "text", text, align, weight, maxCapHeight, ...(like?.font ? { font: like.font } : {}) };
+}
+
+/** The font a text segment uses: its own, or the label's default. */
+export function textFont(label: Pick<LabelOptions, "font">, segment: TextSegment): FontFamily {
+  return segment.font ?? label.font ?? DEFAULT_FONT;
 }
 
 export function isText(segment: Segment): segment is TextSegment {
@@ -62,6 +71,8 @@ export interface LabelOptions {
   model?: string;
   ribs: boolean;
   segments: Segment[];
+  /** Font for text segments that don't set their own. */
+  font: FontFamily;
   /** Where the row sits on the label when nothing grows. */
   align: Align;
   /** Space between segments, in mm. */
@@ -77,6 +88,7 @@ export const DEFAULT_OPTIONS: LabelOptions = {
   units: 1,
   ribs: true,
   segments: [textSegment("M3 × 12")],
+  font: DEFAULT_FONT,
   align: "center",
   gap: 1,
   margin: 0.8,
@@ -151,7 +163,7 @@ function layoutFace(wasm: ManifoldToplevel, fonts: Fonts, opts: LabelOptions) {
     const column = seg.stack && items.length ? lastColumn : lastColumn + 1;
     if (!isText(seg)) items.push({ grow, index, column, text: false, symbol: seg, height: Math.min(seg.size, areaHeight) });
     else {
-      const shape = textBlock(wasm, fonts[seg.weight], seg.text, seg.align);
+      const shape = textBlock(wasm, fonts(textFont(opts, seg), seg.weight), seg.text, seg.align);
       if (!shape) return;
       const maxCap = Math.min(seg.maxCapHeight, areaHeight / size(shape).height);
       items.push({ grow, index, column, text: true, segment: seg, shape, maxCap });
