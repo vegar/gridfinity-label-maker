@@ -63,7 +63,7 @@ const GROUPS: Group[] = [
     id: "segments",
     title: "Text and symbols",
     intro:
-      "A label is a row of segments. Each segment is either text or a symbol, in any order.",
+      "A label is a row of segments. Each segment is either text or a symbol, in any order, and a segment can sit under the one before it.",
     figures: [
       {
         src: "segments.webp",
@@ -106,8 +106,12 @@ const GROUPS: Group[] = [
         text: "Segments marked Grow share the spare width between them; Align then sets where each sits in its share. With nothing growing, the row is packed together and Row position places it left, centred or right.",
       },
       {
+        title: "Below previous",
+        text: "Tick Below previous to stack a segment under the one before it, such as a big “NUTS” over a small “WASHERS”. Stacked segments form a column and each keeps its own letter height, weight and colour; symbols stack too. A column too tall for the label shrinks as a whole.",
+      },
+      {
         title: "Gap",
-        text: "The space between segments, set on the label (1 mm by default).",
+        text: "The space between segments, side by side and stacked, set on the label (1 mm by default).",
       },
     ],
   },

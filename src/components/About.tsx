@@ -89,7 +89,7 @@ const CHOICES: { title: string; text: ReactNode }[] = [
   },
   {
     title: "A label is a row of segments",
-    text: "Text and symbols can come in any order. Segments marked Grow share the spare width; without any, the row is packed together with a fixed gap (1 mm by default). Each text has its own alignment, weight and letter height, and each symbol its own height, so small bold text can sit next to tall regular text.",
+    text: "Text and symbols can come in any order. Segments marked Grow share the spare width; without any, the row is packed together with a fixed gap (1 mm by default). Each text has its own alignment, weight and letter height, and each symbol its own height, so small bold text can sit next to tall regular text. Two sizes on two lines, a big line over a smaller one, are two text segments stacked into a column rather than one text with sizes per line: each line then has every text setting, and symbols can stack the same way.",
   },
   {
     title: "Flush text for multi-colour",

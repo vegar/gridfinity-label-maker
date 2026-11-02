@@ -15,6 +15,8 @@ interface SegmentOptions {
   grow?: boolean;
   /** Where the segment sits in its share when it grows. For text, also how its lines line up. */
   align: Align;
+  /** Sit under the segment before it, in the same column, instead of beside it. */
+  stack?: boolean;
 }
 
 /** A piece of text on the label. "\n" starts a new line within it. */
@@ -32,7 +34,7 @@ export type SymbolSegment = LabelSymbol &
     size: number;
   };
 
-/** What goes on the label, left to right: text and symbols in any order. */
+/** What goes on the label, left to right: text and symbols in any order, some stacked in columns. */
 export type Segment = TextSegment | SymbolSegment;
 
 export const TEXT_DEFAULTS = { align: "center", weight: "bold", maxCapHeight: 6 } as const satisfies Partial<TextSegment>;
@@ -114,78 +116,145 @@ function centered(shape: CrossSection): CrossSection {
   return shape.translate(-(min[0] + max[0]) / 2, -(min[1] + max[1]) / 2);
 }
 
-type Item = { grow: boolean; index: number } & (
+type Item = { grow: boolean; index: number; column: number } & (
   | { text: true; segment: TextSegment; shape: CrossSection; maxCap: number }
   | { text: false; symbol: SymbolSegment; height: number }
 );
 
+/** Where an item lines up across its column, and where its column sits in its share of the row. */
+function itemAlign(it: Item): Align {
+  return it.text ? it.segment.align : it.symbol.align;
+}
+
 /**
- * Lay out the segments in a row across the label's face area. Symbols keep
- * their size and the text fits in the rest, each text shrinking by the same
- * factor so their sizes stay in proportion. Spare width is shared by the
- * growing segments, or left around the row.
+ * Lay out the segments in a row across the label's face area. A segment
+ * stacked under the one before it shares that segment's column, so a row is
+ * a list of columns, each one or more segments high. Symbols keep their size
+ * and the text fits in the rest, each text shrinking by the same factor so
+ * their sizes stay in proportion. A column too tall for the label shrinks
+ * as a whole. Spare width is shared by the growing columns, or left around
+ * the row.
  */
 function layoutFace(wasm: ManifoldToplevel, fonts: Fonts, opts: LabelOptions) {
   const area = baseInfo(opts.base).area(opts.units);
   const areaWidth = area.width - 2 * opts.margin;
   const areaHeight = area.height - 2 * opts.margin;
+  const gap = Math.max(0, opts.gap);
 
   // Text at a cap height of 1 mm; empty text takes no room.
   const items: Item[] = [];
+  let lastColumn = -1;
   opts.segments.forEach((seg, index) => {
     const grow = !!seg.grow;
-    if (!isText(seg)) items.push({ grow, index, text: false, symbol: seg, height: Math.min(seg.size, areaHeight) });
+    const column = seg.stack && items.length ? lastColumn : lastColumn + 1;
+    if (!isText(seg)) items.push({ grow, index, column, text: false, symbol: seg, height: Math.min(seg.size, areaHeight) });
     else {
       const shape = textBlock(wasm, fonts[seg.weight], seg.text, seg.align);
-      if (shape) {
-        const maxCap = Math.min(seg.maxCapHeight, areaHeight / size(shape).height);
-        items.push({ grow, index, text: true, segment: seg, shape, maxCap });
-      }
+      if (!shape) return;
+      const maxCap = Math.min(seg.maxCapHeight, areaHeight / size(shape).height);
+      items.push({ grow, index, column, text: true, segment: seg, shape, maxCap });
     }
+    lastColumn = column;
   });
   if (items.length === 0) return { shapes: [] };
 
+  const columns: number[][] = [];
+  items.forEach((it, i) => (columns[it.column] ??= []).push(i));
+  const hasText = columns.map((col) => col.some((i) => items[i].text));
   const texts = items.filter((it) => it.text);
   const symbols = items.filter((it) => !it.text);
-  const gap = Math.max(0, opts.gap);
-  const gapWidth = gap * (items.length - 1);
-  const symbolGapWidth = gap * items.slice(1).filter((it, i) => !it.text && !items[i].text).length;
+  const gapWidth = gap * (columns.length - 1);
+  const symbolGapWidth = gap * columns.slice(1).filter((_, c) => !hasText[c] && !hasText[c + 1]).length;
+  /** The widest of `width(i)` in each column, added up. */
+  const widest = (width: (i: number) => number) =>
+    columns.reduce((w, col) => w + Math.max(0, ...col.map(width)), 0);
 
   // Every text at its largest size, side by side.
-  const naturalText = texts.reduce((w, it) => w + it.maxCap * size(it.shape).width, 0);
+  const naturalText = widest((i) => {
+    const it = items[i];
+    return it.text ? it.maxCap * size(it.shape).width : 0;
+  });
 
   // Bolts get whatever the text leaves at its full size, but never less
   // than a third of the label, so they don't collapse to a stub.
-  const fixedWidth = symbols
-    .filter((it) => !isVariableWidth(it.symbol))
-    .reduce((w, it) => w + size(renderSymbol(wasm, it.symbol, it.height)).width, 0);
+  const fixedWidth = widest((i) => {
+    const it = items[i];
+    return it.text || isVariableWidth(it.symbol) ? 0 : size(renderSymbol(wasm, it.symbol, it.height)).width;
+  });
   const budget = texts.length
     ? Math.max(areaWidth - fixedWidth - gapWidth - naturalText, areaWidth / 3)
     : areaWidth - fixedWidth - gapWidth;
-  const variableCount = symbols.filter((it) => isVariableWidth(it.symbol)).length;
+  const variableCount = columns.filter((col) =>
+    col.some((i) => {
+      const it = items[i];
+      return !it.text && isVariableWidth(it.symbol);
+    }),
+  ).length;
   const each = variableCount ? budget / variableCount : 0;
 
-  // Shrink symbols that are too tall (the Cullenect bolt is taller than its
-  // height), then all symbols alike if they leave too little room for the text.
   const rendered = items.map((it) => (it.text ? it.shape : centered(renderSymbol(wasm, it.symbol, it.height, each))));
-  const tallFit = rendered.map((s, i) => (items[i].text ? 1 : Math.min(1, areaHeight / size(s).height)));
-  const symbolWidth = rendered.reduce((w, s, i) => w + (items[i].text ? 0 : size(s).width * tallFit[i]), 0);
-  const symbolRoom = Math.max((texts.length ? areaWidth * 0.7 : areaWidth) - symbolGapWidth, areaWidth * 0.2);
-  const widthFit = symbols.length ? Math.min(1, symbolRoom / symbolWidth) : 1;
 
-  const textRoom = Math.max(areaWidth - symbolWidth * widthFit - gapWidth, areaWidth * 0.1);
-  const textFit = texts.length ? Math.min(1, textRoom / naturalText) : 1;
-  const shapes = rendered.map((s, i) => {
-    const it = items[i];
-    return s.scale(it.text ? it.maxCap * textFit : tallFit[i] * widthFit);
+  // Shrink columns that are too tall: a stack higher than the label, or a
+  // symbol taller than its height (the Cullenect bolt is).
+  const heightFit = items.map(() => 1);
+  columns.forEach((col) => {
+    const height = col.reduce((h, i) => {
+      const it = items[i];
+      return h + (it.text ? it.maxCap : 1) * size(rendered[i]).height;
+    }, 0);
+    const fit = Math.min(1, (areaHeight - gap * (col.length - 1)) / height);
+    col.forEach((i) => (heightFit[i] = Math.max(0, fit)));
+  });
+  /** Scale of each item at full text size, before fitting the width. */
+  const scale = items.map((it, i) => (it.text ? it.maxCap : 1) * heightFit[i]);
+
+  // Shrink all symbols alike if they leave too little room for the text.
+  const symbolWidth = widest((i) => (items[i].text ? 0 : size(rendered[i]).width * scale[i]));
+  const symbolRoom = Math.max((texts.length ? areaWidth * 0.7 : areaWidth) - symbolGapWidth, areaWidth * 0.2);
+  const widthFit = symbols.length && symbolWidth > 0 ? Math.min(1, symbolRoom / symbolWidth) : 1;
+
+  // Then the largest text size that fits beside them, down to a floor.
+  const rowAt = (textFit: number) =>
+    gapWidth + widest((i) => size(rendered[i]).width * scale[i] * (items[i].text ? textFit : widthFit));
+  let textFit = 1;
+  if (texts.length && rowAt(1) > areaWidth) {
+    const natural = widest((i) => (items[i].text ? size(rendered[i]).width * scale[i] : 0));
+    let lo = Math.min(1, (areaWidth * 0.1) / natural);
+    let hi = 1;
+    if (rowAt(lo) < areaWidth) {
+      for (let n = 0; n < 40; n++) {
+        const mid = (lo + hi) / 2;
+        if (rowAt(mid) > areaWidth) hi = mid;
+        else lo = mid;
+      }
+    }
+    textFit = lo;
+  }
+  const shapes = rendered.map((s, i) => s.scale(scale[i] * (items[i].text ? textFit : widthFit)));
+  const sizes = shapes.map(size);
+
+  // Stack each column's items top to bottom, centered on the label's middle,
+  // each lined up across the column by its own alignment.
+  const stacked = shapes.map((s) => s);
+  const columnWidths = columns.map((col) => {
+    const width = Math.max(...col.map((i) => sizes[i].width));
+    const height = col.reduce((h, i) => h + sizes[i].height, 0) + gap * (col.length - 1);
+    let y = height / 2;
+    for (const i of col) {
+      const align = items[i].text ? itemAlign(items[i]) : "center";
+      const x = align === "left" ? 0 : align === "right" ? width - sizes[i].width : (width - sizes[i].width) / 2;
+      stacked[i] = shapes[i].translate(x + sizes[i].width / 2 - width / 2, y - sizes[i].height / 2);
+      y -= sizes[i].height + gap;
+    }
+    return width;
   });
 
-  // Spare width goes to the growing segments, shared evenly; without any,
+  // Spare width goes to the growing columns, shared evenly; without any,
   // the row is packed together and placed by `align`.
-  const widths = shapes.map((s) => size(s).width);
-  const total = widths.reduce((a, b) => a + b, 0) + gapWidth;
+  const total = columnWidths.reduce((a, b) => a + b, 0) + gapWidth;
   const spare = Math.max(0, areaWidth - total);
-  const growing = items.filter((it) => it.grow).length;
+  const grows = columns.map((col) => col.some((i) => items[i].grow));
+  const growing = grows.filter(Boolean).length;
   const share = growing ? spare / growing : 0;
   const rowWidth = growing ? Math.max(total, areaWidth) : total;
   let x =
@@ -195,22 +264,22 @@ function layoutFace(wasm: ManifoldToplevel, fonts: Fonts, opts: LabelOptions) {
         ? -areaWidth / 2
         : areaWidth / 2 - rowWidth;
 
-  const placed = shapes.map((s, i) => {
-    const it = items[i];
-    const extra = it.grow ? share : 0;
-    const align = it.text ? it.segment.align : it.symbol.align;
+  const placed = [...stacked];
+  columns.forEach((col, c) => {
+    const extra = grows[c] ? share : 0;
+    const align = itemAlign(items[col[0]]);
     const pad = align === "left" ? 0 : align === "right" ? extra : extra / 2;
-    const out = s.translate(x + pad + widths[i] / 2, 0);
-    x += widths[i] + extra + gap;
-    return out;
+    for (const i of col) placed[i] = stacked[i].translate(x + pad + columnWidths[c] / 2, 0);
+    x += columnWidths[c] + extra + gap;
   });
 
   // Too many segments to fit: shrink the whole row, gaps and all.
   const overflow = Math.min(1, areaWidth / rowWidth);
   const faceShapes = placed.map((s, i) => ({ index: items[i].index, text: items[i].text, shape: s.scale(overflow) }));
   // The smallest letters on the label, to warn when they get hard to read.
-  const capHeight = texts.length ? Math.min(...texts.map((it) => it.maxCap)) * textFit * overflow : undefined;
-  const shrunk = texts.some((it) => it.maxCap * textFit * overflow < it.segment.maxCapHeight - 1e-3);
+  const caps = items.flatMap((it, i) => (it.text ? [{ seg: it.segment, cap: scale[i] * textFit * overflow }] : []));
+  const capHeight = caps.length ? Math.min(...caps.map((c) => c.cap)) : undefined;
+  const shrunk = caps.some((c) => c.cap < c.seg.maxCapHeight - 1e-3);
   return { shapes: faceShapes, capHeight, shrunk };
 }
 

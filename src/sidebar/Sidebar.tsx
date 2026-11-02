@@ -105,7 +105,10 @@ export function Sidebar(props: SidebarProps) {
                   <ul>
                     {label.segments.map((seg, i) => (
                       <li key={i}>
-                        <div className="outline-row child" aria-selected={segment === i}>
+                        <div
+                          className={`outline-row child${seg.stack && i > 0 ? " stacked" : ""}`}
+                          aria-selected={segment === i}
+                        >
                           <button type="button" className="outline-pick" onClick={() => selectLabel(label.id, i)}>
                             {isText(seg) ? <TextIcon /> : engine && <SymbolIcon wasm={engine.wasm} symbol={seg} />}
                             <span className="label-title">{isText(seg) ? segmentSummary(seg) : segmentName(seg)}</span>
@@ -223,7 +226,7 @@ function LabelGrid({ state, update, textDepth, maxDepth, shrunk }: SidebarProps)
           </Prop>
         )}
         {state.segments.length > 1 && (
-          <Prop name="Gap">
+          <Prop name="Gap" title="Space between segments, side by side and stacked">
             <NumberInput value={state.gap} min={0} max={5} step={0.1} onChange={(gap) => update({ gap })} />
           </Prop>
         )}
@@ -282,9 +285,22 @@ function SegmentGrid({ state, update, engine, index }: SidebarProps & { index: n
           <IconSelect
             value={seg.kind}
             options={kinds}
-            onChange={(kind) => replace({ ...newSegment(kind, state.segments), grow: seg.grow, color: seg.color })}
+            onChange={(kind) =>
+              replace({ ...newSegment(kind, state.segments), grow: seg.grow, color: seg.color, stack: seg.stack })
+            }
           />
         </Prop>
+        {index > 0 && (
+          <Prop name="Below previous" title="Stack under the segment before it, in one column, instead of beside it">
+            <Check
+              checked={!!seg.stack}
+              onChange={(stack) => {
+                const { stack: _, ...rest } = seg;
+                replace(stack ? { ...rest, stack } : rest);
+              }}
+            />
+          </Prop>
+        )}
         <Prop name="Grow" title="Take a share of the spare width">
           <Check checked={!!seg.grow} onChange={(grow) => replace({ ...seg, grow })} />
         </Prop>
