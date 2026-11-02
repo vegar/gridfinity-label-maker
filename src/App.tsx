@@ -17,12 +17,16 @@ import { PrinterPicker, usePrinter } from "./components/PrinterPicker";
 import { Segmented } from "./components/Segmented";
 import { bambuPresets, bedOf, bounds, footprint, packPlates, plateCount, printerName, tooLarge } from "./bed";
 import { Sidebar } from "./sidebar/Sidebar";
+import { trackDownload, trackHashPage } from "./analytics";
 
 /** The URL hash, kept in sync so links like #about can switch pages. */
 function useHash() {
   const [hash, setHash] = useState(() => location.hash);
   useEffect(() => {
-    const onChange = () => setHash(location.hash);
+    const onChange = () => {
+      setHash(location.hash);
+      trackHashPage(location.hash);
+    };
     window.addEventListener("hashchange", onChange);
     return () => window.removeEventListener("hashchange", onChange);
   }, []);
@@ -190,6 +194,7 @@ export function App() {
           withExportObjects((objects) => {
             const file = export3mf(exportName, objects, bed, bambuPresets(printer));
             download(file.data, file.filename, file.type);
+            trackDownload("3mf", count);
           })
         }
       >
@@ -199,7 +204,10 @@ export function App() {
         type="button"
         disabled={!canExport}
         onClick={() =>
-          withExportObjects((objects) => download(toStlZip(objects), `${exportName}-stl.zip`, "application/zip"))
+          withExportObjects((objects) => {
+            download(toStlZip(objects), `${exportName}-stl.zip`, "application/zip");
+            trackDownload("stl", count);
+          })
         }
       >
         STL (zip)

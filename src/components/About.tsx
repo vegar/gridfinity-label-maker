@@ -58,6 +58,16 @@ const CHOICES: { title: string; text: ReactNode }[] = [
     text: "Everything, including the geometry, runs in your browser. There is no server, and your labels are saved in the browser between visits.",
   },
   {
+    title: "Anonymous counts",
+    text: (
+      <>
+        Page views and downloads (with the number of labels) are counted with{" "}
+        <a href="https://www.goatcounter.com">GoatCounter</a>. It sets no cookies and stores nothing about you; your
+        label text never leaves the browser.
+      </>
+    ),
+  },
+  {
     title: "Sized for Gridfinity Extended",
     text: "Label dimensions follow gflabel, but are checked against the label pockets in Gridfinity Extended bins, since that is where they are used.",
   },
