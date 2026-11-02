@@ -953,6 +953,20 @@ h2 small {
   margin-left: 22px;
 }
 
+/* A segment stacked under the one before it. */
+.outline-row.child.stacked {
+  margin-left: 34px;
+  position: relative;
+}
+
+.outline-row.child.stacked::before {
+  content: "↳";
+  position: absolute;
+  left: -12px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
 .outline-pick {
   font: inherit;
   font-size: 0.85rem;

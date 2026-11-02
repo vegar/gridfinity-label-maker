@@ -5,7 +5,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import type { Manifold, ManifoldToplevel } from "manifold-3d";
 import { buildByKind } from "./parts";
 import { loadManifold } from "../src/manifold";
-import { DEFAULT_OPTIONS, maxEmbeddedDepth, textSegment } from "../src/label";
+import { buildLabel, DEFAULT_OPTIONS, maxEmbeddedDepth, textSegment } from "../src/label";
 import { export3mf, plateLayout, to3mf, toStl, toStlZip } from "../src/export";
 import { bambuPresets, plateOrigin, TOWER_BRIM } from "../src/bed";
 
@@ -56,6 +56,40 @@ describe("buildLabel", () => {
     expect(tb.min[0]).toBeGreaterThanOrEqual(-18 + 0.8 - 1e-3);
     expect(tb.max[0]).toBeLessThanOrEqual(18 - 0.8 + 1e-3);
     expect(capHeight!).toBeLessThan(6);
+  });
+
+  it("stacks a segment under the one before it, each at its own size", () => {
+    const big = { ...textSegment("NUTS"), maxCapHeight: 4 };
+    const small = { ...textSegment("WASHERS"), maxCapHeight: 2.5, stack: true };
+    const parts = buildLabel(wasm, fonts, { ...DEFAULT_OPTIONS, segments: [big, small] });
+    const [top, bottom] = parts.segments.map((s) => s.manifold.boundingBox());
+    // One column: the second line sits below the first, both centered across it.
+    expect(bottom.max[1]).toBeLessThan(top.min[1]);
+    expect(top.min[1] - bottom.max[1]).toBeCloseTo(DEFAULT_OPTIONS.gap, 3);
+    expect((top.min[0] + top.max[0]) / 2).toBeCloseTo((bottom.min[0] + bottom.max[0]) / 2, 3);
+    // Round letters overshoot the cap height a little.
+    expect(top.max[1] - top.min[1]).toBeCloseTo(4, 0);
+    expect(parts.capHeight).toBeCloseTo(2.5, 1);
+    expect(parts.shrunk).toBe(false);
+  });
+
+  it("shrinks a stack that is taller than the label", () => {
+    const line = { ...textSegment("AB"), maxCapHeight: 6 };
+    const parts = buildLabel(wasm, fonts, { ...DEFAULT_OPTIONS, segments: [line, { ...line, stack: true }] });
+    const boxes = parts.segments.map((s) => s.manifold.boundingBox());
+    expect(Math.max(...boxes.map((b) => b.max[1])) - Math.min(...boxes.map((b) => b.min[1]))).toBeLessThanOrEqual(
+      11 - 2 * DEFAULT_OPTIONS.margin + 1e-3,
+    );
+    expect(parts.shrunk).toBe(true);
+  });
+
+  it("ignores stacking on the first segment", () => {
+    const plain = buildLabel(wasm, fonts, DEFAULT_OPTIONS);
+    const stacked = buildLabel(wasm, fonts, {
+      ...DEFAULT_OPTIONS,
+      segments: DEFAULT_OPTIONS.segments.map((s) => ({ ...s, stack: true })),
+    });
+    expect(stacked.segments[0].manifold.boundingBox()).toEqual(plain.segments[0].manifold.boundingBox());
   });
 
   it("leaves material above the snap-fit channels for deep flush text", () => {
