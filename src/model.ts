@@ -266,7 +266,7 @@ function flatAt(mesh: RawMesh, z: number, up: boolean) {
  * its thickness along Z, with the face (the bigger flat side, or the other
  * one if `flip`) up at z = 0, centered on the face.
  */
-export function prepareModel(raw: RawMesh, flip = false, area?: TextArea): PreparedModel {
+export function prepareModel(raw: RawMesh, flip = false, area?: TextArea, turnAround = false): PreparedModel {
   const mesh = weld(raw);
   const { min, max } = bounds(mesh.positions);
   const extent = [0, 1, 2].map((k) => max[k] - min[k]);
@@ -293,6 +293,13 @@ export function prepareModel(raw: RawMesh, flip = false, area?: TextArea): Prepa
     for (let i = 0; i < n; i++) {
       turned[i * 3 + 1] = -turned[i * 3 + 1];
       turned[i * 3 + 2] = -turned[i * 3 + 2];
+    }
+  }
+  // Ends swapped: turn the label half a turn on its face, so text reads the other way.
+  if (turnAround) {
+    for (let i = 0; i < n; i++) {
+      turned[i * 3] = -turned[i * 3];
+      turned[i * 3 + 1] = -turned[i * 3 + 1];
     }
   }
   const face = flatAt(prepared, depth / 2, true);
@@ -329,7 +336,7 @@ const models = new Map<string, PreparedModel>();
 export function registerModel(stored: StoredModel): PreparedModel {
   const known = knownModel(stored.hash);
   const flip = stored.flip ?? known?.flip ?? false;
-  const prepared = prepareModel(parseModel(stored.bytes), flip, known?.area);
+  const prepared = prepareModel(parseModel(stored.bytes), flip, known?.area, known?.turnAround);
   models.set(stored.hash, prepared);
   return prepared;
 }

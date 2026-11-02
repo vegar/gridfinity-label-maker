@@ -135,3 +135,20 @@ describe("known label files", () => {
     }
   });
 });
+
+describe("turning a label around", () => {
+  it("swaps its ends and keeps the face up", () => {
+    // A wedge-ended stand-in: a 40 × 12 plate with a 4 mm stub at +X only.
+    const { Manifold } = wasm;
+    const shape = Manifold.cube([40, 12, 2], true).add(Manifold.cube([4, 6, 2], true).translate(22, 0, 0));
+    const raw = parseModel(toStl(shape));
+    // The stub's end is lighter (480 vs 528 of the 1008 mm³ either side of
+    // the face's middle), and turning around moves it to the other side.
+    const rightVolume = (m: Manifold) => m.trimByPlane([1, 0, 0], 0).volume();
+    const plain = modelBody(wasm, prepareModel(raw));
+    const turned = modelBody(wasm, prepareModel(raw, false, undefined, true));
+    expect(rightVolume(plain)).toBeCloseTo(480, 1);
+    expect(rightVolume(turned)).toBeCloseTo(528, 1);
+    expect(turned.boundingBox().max[2]).toBeCloseTo(0, 3);
+  });
+});
