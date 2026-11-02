@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 
 interface Feature {
   title: string;
@@ -349,8 +349,12 @@ function figure(f: Figure) {
   );
 }
 
-/** Every feature of the app, grouped by where it is found. */
-export function Features() {
+/** Every feature of the app, grouped by where it is found. `section` is a group id to scroll to, from #features/<id>. */
+export function Features({ section }: { section?: string }) {
+  useEffect(() => {
+    if (section) document.getElementById(`features-${section}`)?.scrollIntoView();
+  }, [section]);
+
   return (
     <div className="about features">
       <article>

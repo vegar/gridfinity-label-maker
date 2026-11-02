@@ -151,6 +151,15 @@ export function loadSession(): Session {
   }
 }
 
+/** Whether this browser has labels saved from an earlier visit. */
+export function hasSavedSession() {
+  try {
+    return localStorage.getItem(STORAGE_KEY) !== null || localStorage.getItem(LEGACY_STORAGE_KEY) !== null;
+  } catch {
+    return false;
+  }
+}
+
 export function saveSession(session: Session) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(session));

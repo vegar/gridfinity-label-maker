@@ -4,7 +4,7 @@ import type { Manifold } from "manifold-3d";
 import { export3mf, toStlZip, type ExportObject, type ExportPart } from "./export";
 import { maxEmbeddedDepth, type LabelParts } from "./label";
 import type { Engine } from "./useEngine";
-import { fileName, loadSession, segmentColor, saveSession, updateLabel, type LabelState, type Session } from "./state";
+import { fileName, hasSavedSession, loadSession, segmentColor, saveSession, updateLabel, type LabelState, type Session } from "./state";
 import { useEngine } from "./useEngine";
 import { useLabels } from "./useLabels";
 import { useModels } from "./useModels";
@@ -14,6 +14,8 @@ import type { PreviewLabel, RowLayout } from "./preview";
 import { SidebarResizer, useSidebarWidth } from "./components/SidebarResizer";
 import { About } from "./components/About";
 import { Features } from "./components/Features";
+import { WhatsNew } from "./components/WhatsNew";
+import { WHATS_NEW, entriesToShow, loadLastSeen, saveLastSeen, type WhatsNewEntry } from "./whatsNew";
 import { PrinterPicker, usePrinter } from "./components/PrinterPicker";
 import { Segmented } from "./components/Segmented";
 import { bambuPresets, bedOf, bounds, footprint, packPlates, plateCount, printerName, tooLarge } from "./bed";
@@ -81,7 +83,20 @@ export function App() {
   // The about and features pages cover the app instead of replacing it, so the preview keeps its camera.
   const hash = useHash();
   const showAbout = hash === "#about";
-  const showFeatures = hash === "#features";
+  const showFeatures = hash === "#features" || hash.startsWith("#features/");
+  const featureSection = hash.startsWith("#features/") ? hash.slice("#features/".length) : undefined;
+
+  // Features added since the last visit, shown once at page load. Worked out before the
+  // session is saved, so a first visit (nothing saved yet) can be told apart from a return.
+  const [whatsNew, setWhatsNew] = useState<WhatsNewEntry[]>(() => entriesToShow(loadLastSeen(), hasSavedSession()));
+  useEffect(() => {
+    // Nothing to show (such as on a first visit): today's features count as seen.
+    if (whatsNew.length === 0) saveLastSeen();
+  }, []);
+  const closeWhatsNew = () => {
+    saveLastSeen();
+    setWhatsNew([]);
+  };
 
   const { engine, error: engineError } = useEngine();
   const models = useModels();
@@ -243,7 +258,16 @@ export function App() {
         <footer>
           Label geometry from <a href="https://github.com/ndevenish/gflabel">gflabel</a> (BSD-3). Cullenect system by{" "}
           <a href="https://makerworld.com/en/models/446624">Cullen J Webb</a>, pred labels by{" "}
-          <a href="https://www.printables.com/model/592545">pred</a>. <a href="#features">Features</a> · <a href="#about">About</a>
+          <a href="https://www.printables.com/model/592545">pred</a>. <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              setWhatsNew(WHATS_NEW);
+            }}
+          >
+            What's new
+          </a>{" "}
+          · <a href="#features">Features</a> · <a href="#about">About</a>
         </footer>
       </aside>
       <SidebarResizer width={sidebarWidth} onChange={setSidebarWidth} />
@@ -303,7 +327,8 @@ export function App() {
         </div>
       </section>
       {showAbout && <About />}
-      {showFeatures && <Features />}
+      {showFeatures && <Features section={featureSection} />}
+      {whatsNew.length > 0 && <WhatsNew entries={whatsNew} onClose={closeWhatsNew} />}
     </main>
   );
 }
