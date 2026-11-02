@@ -1277,3 +1277,8 @@ h2 small {
 .whats-new a {
   color: var(--accent);
 }
+
+.whats-new p {
+  margin: 0;
+  line-height: 1.5;
+}

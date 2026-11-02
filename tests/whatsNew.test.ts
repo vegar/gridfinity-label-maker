@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { WHATS_NEW, entriesToShow, entryHref, newestEntry, unseenEntries, type WhatsNewEntry } from "../src/whatsNew";
+import { WHATS_NEW, startDialog, entryHref, newestEntry, unseenEntries, type WhatsNewEntry } from "../src/whatsNew";
 
 const entries: WhatsNewEntry[] = [
   { at: "2026-10-01T10:00Z", text: "old", section: "holders" },
@@ -19,9 +19,11 @@ describe("what's new", () => {
     expect(unseenEntries("2026-11-02T19:00Z", entries)).toEqual([]);
   });
 
-  it("shows nothing to a first-time visitor and everything to a returning one", () => {
-    expect(entriesToShow(null, false, entries)).toEqual([]);
-    expect(entriesToShow(null, true, entries)).toHaveLength(3);
+  it("welcomes a first-time visitor and shows a returning one what they haven't seen", () => {
+    expect(startDialog(null, false, entries)).toEqual({ kind: "welcome" });
+    expect(startDialog(null, true, entries)).toMatchObject({ kind: "news", entries: { length: 3 } });
+    expect(startDialog("2026-11-02T18:00Z", true, entries)).toMatchObject({ kind: "news", entries: [{ text: "newest" }] });
+    expect(startDialog("2026-11-02T19:00Z", true, entries)).toBeNull();
   });
 
   it("links to the section on the features page", () => {

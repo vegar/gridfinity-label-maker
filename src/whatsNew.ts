@@ -22,7 +22,7 @@ export const WHATS_NEW: WhatsNewEntry[] = [
   },
   {
     at: "2026-11-02T18:53Z",
-    text: "Put text on USSA Vault labels, or any other commercial label, by uploading the label file you bought.",
+    text: "Put text on USSA Vault labels by uploading the Vault label file you bought.",
     section: "holders",
   },
 ];
@@ -42,14 +42,18 @@ export function unseenEntries(lastSeen: string | null | undefined, entries: What
     .sort((a, b) => time(b.at) - time(a.at));
 }
 
+/** What to show at page load: a welcome, the features added since the last visit, or nothing. */
+export type StartDialog = { kind: "welcome" } | { kind: "news"; entries: WhatsNewEntry[] } | null;
+
 /**
- * What to show at page load. A first-time visitor has nothing to catch up on,
- * so they see nothing and the current entries count as seen; a visitor from
- * before this dialog existed (they have saved labels) sees every entry.
+ * A first-time visitor (nothing seen, no saved labels) gets a welcome instead of
+ * a list of features that are all new to them; a visitor from before this dialog
+ * existed (they have saved labels) sees every entry.
  */
-export function entriesToShow(lastSeen: string | null, returning: boolean, entries: WhatsNewEntry[] = WHATS_NEW) {
-  if (!lastSeen && !returning) return [];
-  return unseenEntries(lastSeen, entries);
+export function startDialog(lastSeen: string | null, returning: boolean, entries: WhatsNewEntry[] = WHATS_NEW): StartDialog {
+  if (!lastSeen && !returning) return { kind: "welcome" };
+  const unseen = unseenEntries(lastSeen, entries);
+  return unseen.length ? { kind: "news", entries: unseen } : null;
 }
 
 export function loadLastSeen(): string | null {

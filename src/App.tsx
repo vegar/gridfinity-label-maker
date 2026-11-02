@@ -15,7 +15,7 @@ import { SidebarResizer, useSidebarWidth } from "./components/SidebarResizer";
 import { About } from "./components/About";
 import { Features } from "./components/Features";
 import { WhatsNew } from "./components/WhatsNew";
-import { WHATS_NEW, entriesToShow, loadLastSeen, saveLastSeen, type WhatsNewEntry } from "./whatsNew";
+import { WHATS_NEW, loadLastSeen, saveLastSeen, startDialog, type StartDialog } from "./whatsNew";
 import { PrinterPicker, usePrinter } from "./components/PrinterPicker";
 import { Segmented } from "./components/Segmented";
 import { bambuPresets, bedOf, bounds, footprint, packPlates, plateCount, printerName, tooLarge } from "./bed";
@@ -86,16 +86,16 @@ export function App() {
   const showFeatures = hash === "#features" || hash.startsWith("#features/");
   const featureSection = hash.startsWith("#features/") ? hash.slice("#features/".length) : undefined;
 
-  // Features added since the last visit, shown once at page load. Worked out before the
-  // session is saved, so a first visit (nothing saved yet) can be told apart from a return.
-  const [whatsNew, setWhatsNew] = useState<WhatsNewEntry[]>(() => entriesToShow(loadLastSeen(), hasSavedSession()));
+  // A welcome on the first visit, then the features added since the last one. Worked out
+  // before the session is saved, so a first visit (nothing saved yet) can be told apart from a return.
+  const [dialog, setDialog] = useState<StartDialog>(() => startDialog(loadLastSeen(), hasSavedSession()));
   useEffect(() => {
-    // Nothing to show (such as on a first visit): today's features count as seen.
-    if (whatsNew.length === 0) saveLastSeen();
+    // Nothing to show: today's features count as seen.
+    if (!dialog) saveLastSeen();
   }, []);
   const closeWhatsNew = () => {
     saveLastSeen();
-    setWhatsNew([]);
+    setDialog(null);
   };
 
   const { engine, error: engineError } = useEngine();
@@ -262,7 +262,7 @@ export function App() {
             href="#"
             onClick={(e) => {
               e.preventDefault();
-              setWhatsNew(WHATS_NEW);
+              setDialog({ kind: "news", entries: WHATS_NEW });
             }}
           >
             What's new
@@ -328,7 +328,7 @@ export function App() {
       </section>
       {showAbout && <About />}
       {showFeatures && <Features section={featureSection} />}
-      {whatsNew.length > 0 && <WhatsNew entries={whatsNew} onClose={closeWhatsNew} />}
+      {dialog && <WhatsNew entries={dialog.kind === "news" ? dialog.entries : undefined} onClose={closeWhatsNew} />}
     </main>
   );
 }
