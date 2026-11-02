@@ -39,8 +39,14 @@ const GROUPS: Group[] = [
         alt: "A 2U Cullenect label, a legacy Cullenect label and a 2U pred label with tabs and holes at each end",
         caption: "From the back: Cullenect 2U, Cullenect legacy and pred 2U.",
       },
+      // The next two are made by hand from uploaded files: the models can't be in
+      // the repo for feature-shots.cjs.
       {
-        // Made by hand from an uploaded file: the model can't be in the repo for feature-shots.cjs.
+        src: "vault.webp",
+        alt: "A USSA Vault drawer label with a round right end, with a screw symbol and “M3 × 12”",
+        caption: "A USSA Vault drawer label, from your own file.",
+      },
+      {
         src: "edgelabel.webp",
         alt: "A Jerraris EdgeLabel face plate with a slanted right end, with a screw symbol and “M3 × 12” in its top left corner",
         caption: "A Jerraris EdgeLabel face plate, from your own file.",
