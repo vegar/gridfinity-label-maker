@@ -4,6 +4,10 @@ A browser-based, visual label maker for Gridfinity bins. Type your text, see the
 label in 3D, and download a print-ready file. Everything runs in the browser;
 there is no server.
 
+**Try it at <https://labels.vi-kan.net>**
+
+![Gridfinity Labels: label list, properties and a 3D preview of the labels](public/features/app.webp)
+
 Inspired by [label.alch.shop](https://label.alch.shop), with label geometry from
 [gflabel](https://github.com/ndevenish/gflabel).
 
@@ -70,10 +74,18 @@ and export code in `src/` (`bases.ts`, `cullenect.ts`, `pred.ts`, `symbols.ts`, 
 
 `.github/workflows/ci.yml` tests and builds every push and pull request, and deploys `main`
 to GitHub Pages. To turn deployment on, set **Settings → Pages → Source** to **GitHub Actions**.
-For the `labels.vi-kan.net` domain, add it under **Settings → Pages → Custom domain**.
+The site is served at <https://labels.vi-kan.net>. The build uses a relative base (`base: "./"`
+in `vite.config.ts`), so the same build works on a custom domain and on the plain Pages path.
+A custom domain needs a DNS `CNAME` record pointing at `<user>.github.io`, the domain under
+**Settings → Pages → Custom domain** (with Actions deployment a `CNAME` file in the build is
+ignored), and **Enforce HTTPS** ticked once GitHub has issued the certificate.
 
 ## Roadmap
 
-- More label holders from gflabel (pred, modern, predbox, tailorbox)
+- More label holders from gflabel (modern, predbox, tailorbox)
 
-See `THIRD_PARTY_NOTICES.md` for licences of included code and fonts.
+## Licence
+
+MIT, see [`LICENSE`](LICENSE). The label geometry and symbols ported from gflabel are BSD-3-Clause,
+and Open Sans is under the SIL Open Font License; see
+[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).

@@ -176,7 +176,7 @@ export function About() {
         </div>
 
         <p className="sub">
-          Source code on <a href="https://github.com/vegar/labels.vi-kan.net">GitHub</a>.
+          Source code on <a href="https://github.com/vegar/gridfinity-label-maker">GitHub</a>.
         </p>
       </article>
     </div>
