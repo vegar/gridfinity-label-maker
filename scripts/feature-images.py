@@ -8,7 +8,7 @@ OUT = Path("public/features")
 OUT.mkdir(parents=True, exist_ok=True)
 
 # 3D views: crop to the labels, leaving out the controls along the bottom.
-CANVAS = {"holders", "segments", "colours", "symbols", "print-bed", "print-bed-p1s"}
+CANVAS = {"holders", "segments", "stacked", "colours", "symbols", "print-bed", "print-bed-p1s"}
 # The labels with the view's controls stacked below them.
 STACK = {"preview"}
 # Only the top of a tall screenshot, in pixels.

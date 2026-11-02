@@ -42,6 +42,14 @@ const SETS = {
       { kind: "washer" },
     ], { units: 2, ribs: false }),
   ]),
+  stacked: session(
+    [
+      label("a", [text("NUTS", { maxCapHeight: 6 }), text("WASHERS", { stack: true, maxCapHeight: 3.5 })], { units: 2, ribs: false, baseColor: "#15803d" }),
+      label("b", [{ kind: "nut", nutType: "regular", nutView: "top", size: 8 }, text("M4", { maxCapHeight: 6 }), text("BOLTS", { stack: true, maxCapHeight: 3.5 })], { units: 2, ribs: false, baseColor: "#ea580c" }),
+      label("c", [text("M5–M6", { maxCapHeight: 5.5 }), text("BOLTS + PINS", { stack: true, maxCapHeight: 3 })], { units: 2, ribs: false, baseColor: "#b91c1c" }),
+    ],
+    "b",
+  ),
   colours: session([
     label("a", [
       screw("countersunk", "torx", { color: "#dc2626" }),
@@ -167,6 +175,17 @@ const shot = (el, name) => el.screenshot({ path: `${OUT}/${name}.png` });
   p = await open(browser, SETS.segments);
   await shot(p.locator(".viewer canvas"), "segments");
   await shot(p.locator(".outline"), "segments-outline");
+  await p.context().close();
+
+  // Stacked segments: a big line over a small one.
+  p = await open(browser, SETS.stacked);
+  await p.evaluate(() => {
+    const r = document.querySelectorAll('input[type=range]');
+    const set = (el, v) => { Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set.call(el, v); el.dispatchEvent(new Event("input", { bubbles: true })); };
+    set(r[0], "0"); set(r[1], "6");
+  });
+  await p.waitForTimeout(800);
+  await shot(p.locator(".viewer canvas"), "stacked");
   await p.context().close();
 
   // Every symbol.
