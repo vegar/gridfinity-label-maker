@@ -1214,3 +1214,20 @@ h2 small {
 .colour-override input[type="color"]:disabled {
   opacity: 0.45;
 }
+
+/* Upload button for a holder's label file. */
+.file-button {
+  display: inline-block;
+  padding: 1px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.file-button:hover {
+  border-color: var(--accent);
+}
+
+.file-button:focus-within {
+  outline: 2px solid var(--accent);
+}

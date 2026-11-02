@@ -54,6 +54,10 @@ const GROUPS: Group[] = [
         text: "Labels for pred's bins, held by a tab and hole at each end, for 1U, 2U or 3U bins.",
       },
       {
+        title: "Upload a label file",
+        text: "For holders whose labels are commercial models, such as USSA's Vault, upload the original label file you bought (STL or 3MF). The text goes on its face. The file stays in your browser, is remembered for next time, and can be turned over if the text lands on the wrong side.",
+      },
+      {
         title: "Size",
         text: "The label's width and height are shown next to the holder, worked out from the holder and bin width.",
       },
