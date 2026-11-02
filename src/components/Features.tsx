@@ -55,7 +55,7 @@ const GROUPS: Group[] = [
       },
       {
         title: "Upload a label file",
-        text: "For holders whose labels are commercial models, such as USSA's Vault, upload the original label file you bought (STL or 3MF). The text goes on its face. The file stays in your browser, is remembered for next time, and can be turned over if the text lands on the wrong side.",
+        text: "For holders whose labels are models we can't share, upload the original label file you bought or downloaded (STL or 3MF). Supported: USSA Vault drawer labels and Jerraris GEN2 EdgeLabel face plates. The text goes on its face. The file stays in your browser, is remembered for next time, and can be turned over if the text lands on the wrong side.",
       },
       {
         title: "Size",
