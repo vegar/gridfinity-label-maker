@@ -48,7 +48,7 @@ export function WhatsNew({ entries, onClose }: Props) {
           <>
             <h2>Welcome</h2>
             <p>
-              Design Gridfinity bin labels for Cullenect, pred and USSA Vault holders, with text and fastener
+              Design Gridfinity bin labels for Cullenect, pred, USSA Vault and Jerraris EdgeLabel holders, with text and fastener
               symbols, and download them ready for multi-colour printing. Your labels are saved in this browser.
             </p>
             <p>

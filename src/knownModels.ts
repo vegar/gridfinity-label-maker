@@ -35,6 +35,17 @@ export const KNOWN_MODELS: Record<string, KnownModel> = {
     turnAround: true,
     area: { width: 39, height: 16, x: -1.1 },
   },
+  // Jerraris GEN2 EdgeLabel face plate, "label-v12.stl" (an earlier version
+  // than the current V2602 file, which has another hash): 57 × 27 × 4.5 mm.
+  // The face is the flat front, 55.6 × 26 mm, with a 45° slant on the right
+  // end, so it's 57 mm wide along the top edge and 28 mm along the bottom;
+  // the back has the clips. The text area sits against the top left corner,
+  // 1.5 mm in from the edges and clear of the slant.
+  "d1b12cda84e13349b343f5fed8428beff8d4de5720d647a437ea8acf66bf55b5": {
+    system: "Jerraris EdgeLabel",
+    name: "EdgeLabel face plate",
+    area: { width: 35, height: 16, x: -8.8, y: 3.5 },
+  },
 };
 
 /** Storage systems with a supported label file, for messages. */

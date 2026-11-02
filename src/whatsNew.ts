@@ -16,6 +16,11 @@ export interface WhatsNewEntry {
 
 export const WHATS_NEW: WhatsNewEntry[] = [
   {
+    at: "2026-11-02T21:00Z",
+    text: "Put text on Jerraris GEN2 EdgeLabel face plates by uploading the face plate file.",
+    section: "holders",
+  },
+  {
     at: "2026-11-02T19:00Z",
     text: "Stack a segment under the one before it, such as a big “NUTS” over a small “WASHERS”.",
     section: "segments",

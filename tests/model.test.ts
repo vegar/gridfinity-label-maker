@@ -124,6 +124,11 @@ describe("known label files", () => {
     expect(vault?.system).toBe("USSA Vault");
   });
 
+  it("knows the Jerraris EdgeLabel face plate by its hash", () => {
+    const edge = knownModel("d1b12cda84e13349b343f5fed8428beff8d4de5720d647a437ea8acf66bf55b5");
+    expect(edge?.system).toBe("Jerraris EdgeLabel");
+  });
+
   it("only takes known files outside development", () => {
     const dev = import.meta.env.DEV;
     try {

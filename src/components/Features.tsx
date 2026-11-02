@@ -39,6 +39,18 @@ const GROUPS: Group[] = [
         alt: "A 2U Cullenect label, a legacy Cullenect label and a 2U pred label with tabs and holes at each end",
         caption: "From the back: Cullenect 2U, Cullenect legacy and pred 2U.",
       },
+      // The next two are made by hand from uploaded files: the models can't be in
+      // the repo for feature-shots.cjs.
+      {
+        src: "vault.webp",
+        alt: "A USSA Vault drawer label with a round right end, with a screw symbol and “M3 × 12”",
+        caption: "A USSA Vault drawer label, from your own file.",
+      },
+      {
+        src: "edgelabel.webp",
+        alt: "A Jerraris EdgeLabel face plate with a slanted right end, with a screw symbol and “M3 × 12” in its top left corner",
+        caption: "A Jerraris EdgeLabel face plate, from your own file.",
+      },
     ],
     features: [
       {
@@ -55,7 +67,7 @@ const GROUPS: Group[] = [
       },
       {
         title: "Upload a label file",
-        text: "For holders whose labels are commercial models, such as USSA's Vault, upload the original label file you bought (STL or 3MF). The text goes on its face. The file stays in your browser, is remembered for next time, and can be turned over if the text lands on the wrong side.",
+        text: "For holders whose labels are models we can't share, upload the original label file you bought or downloaded (STL or 3MF). Supported: USSA Vault drawer labels and Jerraris GEN2 EdgeLabel face plates. The text goes on its face. The file stays in your browser, is remembered for next time, and can be turned over if the text lands on the wrong side.",
       },
       {
         title: "Size",
