@@ -16,6 +16,11 @@ export interface WhatsNewEntry {
 
 export const WHATS_NEW: WhatsNewEntry[] = [
   {
+    at: "2026-11-05T20:00Z",
+    text: "Bambu Studio now shows PLA Basic for every filament in a downloaded 3MF, not the file name.",
+    section: "export",
+  },
+  {
     at: "2026-11-02T22:00Z",
     text: "Choose the label font: Open Sans, Barlow Semi Condensed, Roboto Condensed or Atkinson Hyperlegible.",
     section: "segments",

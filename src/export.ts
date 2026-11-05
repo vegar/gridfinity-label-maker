@@ -188,6 +188,11 @@ const BAMBU_APPLICATION = "BambuStudio-02.08.02.61";
  * the filament colours. Bambu Studio fills every other setting from the named
  * presets, so this carries no settings of its own and stays correct when
  * Bambu updates them. The purge tower goes on the spot the layout kept clear.
+ *
+ * filament_diameter must have one entry per slot: Bambu Studio sizes every
+ * per-filament list, filament_settings_id included, to its length before it
+ * picks presets, and fills the rest from a one-entry default. Without it the
+ * second slot lost its preset name and showed as "(file name.3mf)".
  */
 function bambuProjectSettings({ presets, bed, plates, colours }: BambuProject): string {
   const count = Math.max(0, ...plates) + 1;
@@ -206,6 +211,7 @@ function bambuProjectSettings({ presets, bed, plates, colours }: BambuProject): 
       filament_settings_id: colours.map(() => presets.filament),
       filament_colour: colours,
       filament_type: colours.map(() => "PLA"),
+      filament_diameter: colours.map(() => "1.75"),
       // Two-nozzle printers would need every per-nozzle list to match; leave those to the presets.
       ...(presets.nozzles === 1 ? { nozzle_diameter: ["0.4"] } : {}),
       ...(tower
