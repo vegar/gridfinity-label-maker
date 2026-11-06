@@ -362,6 +362,9 @@ describe("export", () => {
     expect(project.printer_settings_id).toBe(presets.printer);
     expect(project.print_settings_id).toBe(presets.process);
     expect(project.filament_colour).toEqual(["#202020", "#FFFFFF"]);
+    // Bambu Studio trims filament_settings_id to this list's length.
+    expect(project.filament_diameter).toHaveLength(2);
+    expect(project.filament_settings_id).toEqual([presets.filament, presets.filament]);
     expect(project.wipe_tower_x[0]).toBe(String(60 + TOWER_BRIM));
 
     // Labels on the second plate sit on that plate, to the right of the first.
