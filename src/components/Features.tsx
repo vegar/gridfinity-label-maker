@@ -48,8 +48,8 @@ const GROUPS: Group[] = [
       },
       {
         src: "edgelabel.webp",
-        alt: "A Jerraris EdgeLabel face plate with a slanted right end, with a screw symbol and “M3 × 12” in its top left corner",
-        caption: "A Jerraris EdgeLabel face plate, built in.",
+        alt: "A Modulith EdgeLabel face plate with a slanted right end, with a screw symbol and “M3 × 12” in its top left corner",
+        caption: "A Modulith EdgeLabel face plate, built in.",
       },
     ],
     features: [
@@ -66,8 +66,8 @@ const GROUPS: Group[] = [
         text: "Labels for pred's bins, held by a tab and hole at each end, for 1U, 2U or 3U bins.",
       },
       {
-        title: "Jerraris EdgeLabel",
-        text: "Jerraris's EdgeLabel face plate, built in with the designer's permission: no file needed. It comes in one size, and the text goes in the top left corner, clear of the slanted end.",
+        title: "Modulith EdgeLabel",
+        text: "Jerraris's Modulith EdgeLabel face plate, built in with the designer's permission: no file needed. It comes in one size, and the text goes in the top left corner, clear of the slanted end.",
       },
       {
         title: "Upload a label file",

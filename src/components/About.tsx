@@ -42,9 +42,9 @@ const HOLDERS: Resource[] = [
     note: "USSA's commercial modular storage system. Its drawer labels work with the label file you bought; Vault is USSA's, and this site isn't affiliated with them.",
   },
   {
-    name: "Jerraris EdgeLabel",
+    name: "Modulith EdgeLabel",
     url: "https://www.printables.com/model/1231302",
-    note: "Jerraris's EdgeLabel face plates (Modulith Decor). The face plate model is Jerraris's design, included unchanged with the designer's permission. Thank you! This site isn't otherwise affiliated with Jerraris.",
+    note: "Jerraris's EdgeLabel face plates for the Modulith storage system. The face plate model is Jerraris's design, included unchanged with the designer's permission. Thank you! This site isn't otherwise affiliated with Jerraris.",
   },
   {
     name: "Gridfinity Extended",

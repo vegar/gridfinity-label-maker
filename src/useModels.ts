@@ -100,7 +100,7 @@ export function useModels(): Models {
       const bytes = new Uint8Array(await file.arrayBuffer());
       const hash = await sha256(bytes);
       if (hash === EDGELABEL_HASH) {
-        throw new Error("The EdgeLabel face plate is built in now: pick “Jerraris EdgeLabel” as the holder, no file needed.");
+        throw new Error("The Modulith EdgeLabel face plate is built in now: pick “Modulith EdgeLabel” as the holder, no file needed.");
       }
       if (!isAllowed(hash)) {
         throw new Error(

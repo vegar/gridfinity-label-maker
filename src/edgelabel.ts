@@ -4,7 +4,7 @@ import { modelBody, parseModel, prepareModel, type PreparedModel } from "./model
 import stlUrl from "./models/edgelabel.stl?inline";
 
 /**
- * Jerraris's EdgeLabel face plate: 57 × 27 × 4.5 mm.
+ * Jerraris's Modulith EdgeLabel face plate: 57 × 27 × 4.5 mm.
  * The face is the flat front, 55.6 × 26 mm, with a 45° slant on the right
  * end, so it's 57 mm wide along the top edge and 28 mm along the bottom; the
  * back has the clips. The text area sits against the top left corner,
