@@ -9,6 +9,8 @@ import { isAllowed, knownModel } from "../src/knownModels";
 import { DEFAULT_OPTIONS, textSegment } from "../src/label";
 import { to3mf, toStl } from "../src/export";
 import { baseInfo } from "../src/bases";
+import { EDGELABEL_HASH } from "../src/edgelabel";
+import { parseSession } from "../src/state";
 import { buildByKind } from "./parts";
 
 let wasm: ManifoldToplevel;
@@ -118,15 +120,39 @@ describe("uploaded label holder", () => {
   });
 });
 
+describe("Modulith EdgeLabel holder", () => {
+  it("is the bundled face plate, unchanged", async () => {
+    const bytes = readFileSync(new URL("../src/models/edgelabel.stl", import.meta.url));
+    expect(await sha256(new Uint8Array(bytes))).toBe(EDGELABEL_HASH);
+  });
+
+  it("puts text in the top left of the face, clear of the slant", () => {
+    const opts = { ...DEFAULT_OPTIONS, base: "edgelabel" as const, segments: [textSegment("M3 × 12")] };
+    expect(baseInfo("edgelabel").size(opts)).toEqual({ width: expect.closeTo(57, 2), height: expect.closeTo(27, 2) });
+    const { base, text } = buildByKind(wasm, fonts, opts);
+    expect(base.status()).toBe("NoError");
+    const box = text!.boundingBox();
+    expect(box.max[2]).toBeCloseTo(0, 3);
+    expect(box.max[0] - box.min[0]).toBeLessThanOrEqual(35);
+    expect(box.max[1] - box.min[1]).toBeLessThanOrEqual(16);
+  });
+
+  it("takes over labels made from an uploaded copy", () => {
+    const saved = JSON.stringify({ labels: [{ id: "a", base: "custom", model: EDGELABEL_HASH }], selected: "a" });
+    const label = parseSession(saved, null).labels[0];
+    expect(label.base).toBe("edgelabel");
+    expect(label.model).toBeUndefined();
+  });
+
+  it("isn't on the upload list any more", () => {
+    expect(knownModel(EDGELABEL_HASH)).toBeUndefined();
+  });
+});
+
 describe("known label files", () => {
   it("knows the USSA Vault label by its hash", () => {
     const vault = knownModel("33113aa7b3be2b55f5b94b3416208f1f019ad11bb70a416814a94afb20b01cf2");
     expect(vault?.system).toBe("USSA Vault");
-  });
-
-  it("knows the Jerraris EdgeLabel face plate by its hash", () => {
-    const edge = knownModel("d1b12cda84e13349b343f5fed8428beff8d4de5720d647a437ea8acf66bf55b5");
-    expect(edge?.system).toBe("Jerraris EdgeLabel");
   });
 
   it("only takes known files outside development", () => {

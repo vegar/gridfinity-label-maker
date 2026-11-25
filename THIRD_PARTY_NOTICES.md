@@ -1,5 +1,11 @@
 # Third-party notices
 
+## Modulith EdgeLabel face plate
+
+`src/models/edgelabel.stl` is the Modulith EdgeLabel face plate by Jerraris, from
+https://www.printables.com/model/1231302, included unchanged with the designer's permission.
+It is not covered by this project's MIT licence; ask the designer before reusing it elsewhere.
+
 ## gflabel
 
 The Cullenect label geometry in `src/cullenect.ts` and the fastener symbols in `src/symbols.ts` are ported from gflabel, https://github.com/ndevenish/gflabel

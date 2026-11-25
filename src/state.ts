@@ -1,4 +1,5 @@
 import { isBaseKind } from "./bases";
+import { EDGELABEL_HASH } from "./edgelabel";
 import {
   DEFAULT_OPTIONS,
   isText,
@@ -112,6 +113,11 @@ function restoreLabel(saved: Partial<LabelState> & LegacyFields): LabelState {
   const state: LabelState = { ...DEFAULT_STATE, id: newId(), ...rest };
   // Labels from before there was a choice are Cullenect ones.
   if (!isBaseKind(state.base)) state.base = DEFAULT_STATE.base;
+  // EdgeLabels made from an uploaded copy of the face plate use the bundled one now.
+  if (state.base === "custom" && state.model === EDGELABEL_HASH) {
+    state.base = "edgelabel";
+    delete state.model;
+  }
   // Labels from before there was a font choice keep Open Sans.
   if (!isFontFamily(state.font)) state.font = DEFAULT_FONT;
   const segments: Partial<Segment>[] = Array.isArray(saved.segments)

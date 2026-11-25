@@ -258,7 +258,8 @@ export function App() {
         <footer>
           Label geometry from <a href="https://github.com/ndevenish/gflabel">gflabel</a> (BSD-3). Cullenect system by{" "}
           <a href="https://makerworld.com/en/models/446624">Cullen J Webb</a>, pred labels by{" "}
-          <a href="https://www.printables.com/model/592545">pred</a>. <a
+          <a href="https://www.printables.com/model/592545">pred</a>, Modulith EdgeLabel by{" "}
+          <a href="https://www.printables.com/model/1231302">Jerraris</a>, used with permission. <a
             href="#"
             onClick={(e) => {
               e.preventDefault();

@@ -16,13 +16,18 @@ export interface WhatsNewEntry {
 
 export const WHATS_NEW: WhatsNewEntry[] = [
   {
+    at: "2026-11-25T09:00Z",
+    text: "Modulith EdgeLabel face plates are built in now, so there's no file to upload.",
+    section: "holders",
+  },
+  {
     at: "2026-11-02T22:00Z",
     text: "Choose the label font: Open Sans, Barlow Semi Condensed, Roboto Condensed or Atkinson Hyperlegible.",
     section: "segments",
   },
   {
     at: "2026-11-02T21:00Z",
-    text: "Put text on Jerraris GEN2 EdgeLabel face plates by uploading the face plate file.",
+    text: "Put text on Modulith EdgeLabel face plates by uploading the face plate file.",
     section: "holders",
   },
   {
