@@ -16,6 +16,11 @@ export interface WhatsNewEntry {
 
 export const WHATS_NEW: WhatsNewEntry[] = [
   {
+    at: "2026-11-25T09:00Z",
+    text: "Jerraris EdgeLabel face plates are built in now, so there's no file to upload.",
+    section: "holders",
+  },
+  {
     at: "2026-11-02T22:00Z",
     text: "Choose the label font: Open Sans, Barlow Semi Condensed, Roboto Condensed or Atkinson Hyperlegible.",
     section: "segments",

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { isAllowed, KNOWN_SYSTEMS, knownModel } from "./knownModels";
+import { EDGELABEL_HASH } from "./edgelabel";
 import { registerModel, sha256, unregisterModel, type StoredModel } from "./model";
 
 /**
@@ -98,6 +99,9 @@ export function useModels(): Models {
     async (file: File) => {
       const bytes = new Uint8Array(await file.arrayBuffer());
       const hash = await sha256(bytes);
+      if (hash === EDGELABEL_HASH) {
+        throw new Error("The EdgeLabel face plate is built in now: pick “Jerraris EdgeLabel” as the holder, no file needed.");
+      }
       if (!isAllowed(hash)) {
         throw new Error(
           `This isn't a label file we support (supported: ${KNOWN_SYSTEMS.join(", ")}). Use the original STL or 3MF as it came from the designer, not a re-exported copy.`,

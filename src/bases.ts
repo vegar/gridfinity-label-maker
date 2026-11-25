@@ -2,11 +2,12 @@ import type { Manifold, ManifoldToplevel } from "manifold-3d";
 import { cullenectBody, cullenectLegacyBody, HEIGHT, LEGACY_WIDTH, widthForUnits } from "./cullenect";
 import { PRED_DEPTH, PRED_HEIGHT, predArea, predBody, predWidthForUnits } from "./pred";
 import { getModel, modelBody } from "./model";
+import { edgeLabelBody, edgeLabelModel } from "./edgelabel";
 
 /** The label holder the label is made for. */
-export type BaseKind = "cullenect" | "cullenect-legacy" | "pred" | "custom";
+export type BaseKind = "cullenect" | "cullenect-legacy" | "pred" | "edgelabel" | "custom";
 
-export const BASE_KINDS: BaseKind[] = ["cullenect", "cullenect-legacy", "pred", "custom"];
+export const BASE_KINDS: BaseKind[] = ["cullenect", "cullenect-legacy", "pred", "edgelabel", "custom"];
 
 export interface BaseOptions {
   base: BaseKind;
@@ -67,11 +68,25 @@ const pred: BaseInfo = {
   body: (wasm, opts) => predBody(wasm, { units: opts.units, recessed: opts.raised }),
 };
 
+/** Jerraris's GEN2 EdgeLabel face plate, from the designer's own file (see edgelabel.ts). */
+const edgeLabel: BaseInfo = {
+  name: "Jerraris EdgeLabel",
+  oneSize: true,
+  size: () => {
+    const m = edgeLabelModel();
+    return { width: m.width, height: m.height };
+  },
+  area: () => edgeLabelModel().face,
+  // Stay in the front half, clear of the clips on the back.
+  maxEmbeddedDepth: () => Math.min(1, edgeLabelModel().depth / 2),
+  body: (wasm) => edgeLabelBody(wasm),
+};
+
 /** Stand-in size until the uploaded model is loaded. */
 const NO_MODEL: Size = { width: 36, height: 11 };
 
 /**
- * A label the user uploads, for holders we don't draw ourselves, such as
+ * A label the user uploads, for holders whose models we can't ship, such as
  * USSA's Vault. Only known files are accepted (see knownModels.ts), and
  * they're only used in the user's browser, never shipped with the site.
  */
@@ -96,6 +111,7 @@ const BASES: Record<BaseKind, BaseInfo> = {
   cullenect,
   "cullenect-legacy": cullenectLegacy,
   pred,
+  edgelabel: edgeLabel,
   custom,
 };
 

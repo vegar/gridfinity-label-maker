@@ -44,7 +44,7 @@ const HOLDERS: Resource[] = [
   {
     name: "Jerraris EdgeLabel",
     url: "https://www.printables.com/model/1231302",
-    note: "Jerraris's GEN2 EdgeLabel face plates (Modulith Decor). They work with the face plate file you downloaded; the design is Jerraris's, and this site isn't affiliated with them.",
+    note: "Jerraris's GEN2 EdgeLabel face plates (Modulith Decor). The face plate model is Jerraris's design, included unchanged with the designer's permission. Thank you! This site isn't otherwise affiliated with Jerraris.",
   },
   {
     name: "Gridfinity Extended",
@@ -110,7 +110,7 @@ const CHOICES: { title: string; text: ReactNode }[] = [
   },
   {
     title: "Bring your own label file",
-    text: "Some holders, such as USSA's Vault and Jerraris's EdgeLabel face plates, are models we can't share or copy. For those you upload the label file you bought or downloaded, and the text is put on its face in your browser. The file is never sent anywhere or shipped with this site. Only files we know (by their SHA-256 fingerprint) are accepted, so we can place the text right and the feature can't be used to share models.",
+    text: "Some holders, such as USSA's Vault, are models we can't share or copy. For those you upload the label file you bought, and the text is put on its face in your browser. The file is never sent anywhere or shipped with this site. Only files we know (by their SHA-256 fingerprint) are accepted, so we can place the text right and the feature can't be used to share models.",
   },
   {
     title: "Screw drawn as two views",

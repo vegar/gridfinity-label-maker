@@ -39,8 +39,8 @@ const GROUPS: Group[] = [
         alt: "A 2U Cullenect label, a legacy Cullenect label and a 2U pred label with tabs and holes at each end",
         caption: "From the back: Cullenect 2U, Cullenect legacy and pred 2U.",
       },
-      // The next two are made by hand from uploaded files: the models can't be in
-      // the repo for feature-shots.cjs.
+      // The next two are made by hand: the Vault model can't be in the repo for
+      // feature-shots.cjs, and the EdgeLabel picture matches it.
       {
         src: "vault.webp",
         alt: "A USSA Vault drawer label with a round right end, with a screw symbol and “M3 × 12”",
@@ -49,7 +49,7 @@ const GROUPS: Group[] = [
       {
         src: "edgelabel.webp",
         alt: "A Jerraris EdgeLabel face plate with a slanted right end, with a screw symbol and “M3 × 12” in its top left corner",
-        caption: "A Jerraris EdgeLabel face plate, from your own file.",
+        caption: "A Jerraris EdgeLabel face plate, built in.",
       },
     ],
     features: [
@@ -66,8 +66,12 @@ const GROUPS: Group[] = [
         text: "Labels for pred's bins, held by a tab and hole at each end, for 1U, 2U or 3U bins.",
       },
       {
+        title: "Jerraris EdgeLabel",
+        text: "Jerraris's GEN2 EdgeLabel face plate, built in with the designer's permission: no file needed. It comes in one size, and the text goes in the top left corner, clear of the slanted end.",
+      },
+      {
         title: "Upload a label file",
-        text: "For holders whose labels are models we can't share, upload the original label file you bought or downloaded (STL or 3MF). Supported: USSA Vault drawer labels and Jerraris GEN2 EdgeLabel face plates. The text goes on its face. The file stays in your browser, is remembered for next time, and can be turned over if the text lands on the wrong side.",
+        text: "For holders whose labels are models we can't share, upload the original label file you bought or downloaded (STL or 3MF). Supported: USSA Vault drawer labels. The text goes on its face. The file stays in your browser, is remembered for next time, and can be turned over if the text lands on the wrong side.",
       },
       {
         title: "Size",

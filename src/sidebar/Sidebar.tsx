@@ -85,7 +85,7 @@ export function Sidebar(props: SidebarProps) {
                 <div className="outline-row" aria-selected={current && segment === undefined}>
                   <button type="button" className="outline-pick" onClick={() => selectLabel(label.id)}>
                     <span className="swatch" style={{ background: label.baseColor, color: label.textColor }}>
-                      {label.base === "custom" ? "File" : `${label.units}U`}
+                      {label.base === "custom" ? "File" : label.base === "edgelabel" ? "Edge" : `${label.units}U`}
                     </span>
                     <span className="label-title">{labelTitle(label)}</span>
                   </button>
