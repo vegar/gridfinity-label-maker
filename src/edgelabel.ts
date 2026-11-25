@@ -1,10 +1,10 @@
 import type { Manifold, ManifoldToplevel } from "manifold-3d";
 import { modelBody, parseModel, prepareModel, type PreparedModel } from "./model";
 // The designer's own file, unchanged, bundled with their permission (see THIRD_PARTY_NOTICES.md).
-import stlUrl from "./models/edgelabel-v12.stl?inline";
+import stlUrl from "./models/edgelabel.stl?inline";
 
 /**
- * Jerraris's GEN2 EdgeLabel face plate, "label-v12.stl": 57 × 27 × 4.5 mm.
+ * Jerraris's EdgeLabel face plate: 57 × 27 × 4.5 mm.
  * The face is the flat front, 55.6 × 26 mm, with a 45° slant on the right
  * end, so it's 57 mm wide along the top edge and 28 mm along the bottom; the
  * back has the clips. The text area sits against the top left corner,

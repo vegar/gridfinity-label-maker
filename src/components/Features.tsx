@@ -67,7 +67,7 @@ const GROUPS: Group[] = [
       },
       {
         title: "Jerraris EdgeLabel",
-        text: "Jerraris's GEN2 EdgeLabel face plate, built in with the designer's permission: no file needed. It comes in one size, and the text goes in the top left corner, clear of the slanted end.",
+        text: "Jerraris's EdgeLabel face plate, built in with the designer's permission: no file needed. It comes in one size, and the text goes in the top left corner, clear of the slanted end.",
       },
       {
         title: "Upload a label file",

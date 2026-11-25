@@ -88,6 +88,6 @@ ignored), and **Enforce HTTPS** ticked once GitHub has issued the certificate.
 
 MIT, see [`LICENSE`](LICENSE). The label geometry and symbols ported from gflabel are BSD-3-Clause,
 the label fonts are under the SIL Open Font License, and the Jerraris EdgeLabel face plate model
-(`src/models/edgelabel-v12.stl`) is Jerraris's design, included with the designer's permission and not under
+(`src/models/edgelabel.stl`) is Jerraris's design, included with the designer's permission and not under
 the MIT licence; see
 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).

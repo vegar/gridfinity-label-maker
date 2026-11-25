@@ -27,7 +27,7 @@ export const WHATS_NEW: WhatsNewEntry[] = [
   },
   {
     at: "2026-11-02T21:00Z",
-    text: "Put text on Jerraris GEN2 EdgeLabel face plates by uploading the face plate file.",
+    text: "Put text on Jerraris EdgeLabel face plates by uploading the face plate file.",
     section: "holders",
   },
   {

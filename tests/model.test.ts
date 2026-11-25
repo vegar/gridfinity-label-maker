@@ -122,7 +122,7 @@ describe("uploaded label holder", () => {
 
 describe("Jerraris EdgeLabel holder", () => {
   it("is the bundled face plate, unchanged", async () => {
-    const bytes = readFileSync(new URL("../src/models/edgelabel-v12.stl", import.meta.url));
+    const bytes = readFileSync(new URL("../src/models/edgelabel.stl", import.meta.url));
     expect(await sha256(new Uint8Array(bytes))).toBe(EDGELABEL_HASH);
   });
 

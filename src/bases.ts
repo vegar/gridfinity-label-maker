@@ -68,7 +68,7 @@ const pred: BaseInfo = {
   body: (wasm, opts) => predBody(wasm, { units: opts.units, recessed: opts.raised }),
 };
 
-/** Jerraris's GEN2 EdgeLabel face plate, from the designer's own file (see edgelabel.ts). */
+/** Jerraris's EdgeLabel face plate, from the designer's own file (see edgelabel.ts). */
 const edgeLabel: BaseInfo = {
   name: "Jerraris EdgeLabel",
   oneSize: true,

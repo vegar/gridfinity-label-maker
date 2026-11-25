@@ -2,7 +2,7 @@
 
 ## Jerraris EdgeLabel face plate
 
-`src/models/edgelabel-v12.stl` is the GEN2 EdgeLabel face plate by Jerraris, from
+`src/models/edgelabel.stl` is the EdgeLabel face plate by Jerraris, from
 https://www.printables.com/model/1231302, included unchanged with the designer's permission.
 It is not covered by this project's MIT licence; ask the designer before reusing it elsewhere.
 

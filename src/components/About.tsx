@@ -44,7 +44,7 @@ const HOLDERS: Resource[] = [
   {
     name: "Jerraris EdgeLabel",
     url: "https://www.printables.com/model/1231302",
-    note: "Jerraris's GEN2 EdgeLabel face plates (Modulith Decor). The face plate model is Jerraris's design, included unchanged with the designer's permission. Thank you! This site isn't otherwise affiliated with Jerraris.",
+    note: "Jerraris's EdgeLabel face plates (Modulith Decor). The face plate model is Jerraris's design, included unchanged with the designer's permission. Thank you! This site isn't otherwise affiliated with Jerraris.",
   },
   {
     name: "Gridfinity Extended",
